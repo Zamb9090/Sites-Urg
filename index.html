@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criadouro Avícola Premium - Aves de Qualidade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2a7d2e;
+            --primary-dark: #1e5c21;
+            --secondary: #d4af37;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --transition: all 0.3s ease;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 4px;
+            background: var(--secondary);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #c19b2c;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-text span {
+            color: var(--secondary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-left: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            bottom: -5px;
+            left: 0;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1552728089-57bdde30beb3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1925&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Sobre */
+        .sobre-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .sobre-img {
+            flex: 1;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sobre-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .sobre-img img:hover {
+            transform: scale(1.05);
+        }
+
+        .sobre-text {
+            flex: 1;
+        }
+
+        .sobre-text h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .sobre-text p {
+            margin-bottom: 20px;
+            color: var(--gray);
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 250px;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .feature i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Catálogo */
+        .catalogo {
+            background-color: var(--light-gray);
+        }
+
+        .filtro-categorias {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .filtro-btn {
+            padding: 8px 20px;
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 30px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filtro-btn.active, .filtro-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .grade-aves {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .ave-card {
+            background-color: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .ave-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .ave-img {
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .ave-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .ave-card:hover .ave-img img {
+            transform: scale(1.1);
+        }
+
+        .ave-info {
+            padding: 20px;
+        }
+
+        .ave-info h3 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .ave-category {
+            display: inline-block;
+            background-color: var(--light-gray);
+            color: var(--gray);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .ave-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+
+        /* Contato */
+        .contato-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .contato-info {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-item i {
+            width: 50px;
+            height: 50px;
+            background-color: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .form-contato {
+            background-color: var(--light-gray);
+            padding: 30px;
+            border-radius: var(--radius);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-family: 'Roboto', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 125, 46, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-col p {
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+            font-size: 0.9rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sobre-content {
+                flex-direction: column;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: white;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 50px;
+                transition: var(--transition);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.9rem;
+            }
+            
+            section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+            
+            .features {
+                flex-direction: column;
+            }
+        }
+
+        /* Animações de rolagem */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navegação -->
+    <header id="header">
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-text">Criadouro<span>Premium</span></div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#home">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#catalogo">Catálogo</a></li>
+                <li><a href="#contato">Contato</a></li>
+                <li><a href="#contato" class="btn">Orçamento</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h1 class="fade-in">Criadouro de Aves de Alta Qualidade</h1>
+            <p class="fade-in">Especializados na criação de aves ornamentais, exóticas e de produção. Mais de 20 anos de experiência e dedicação no cuidado e reprodução de diversas espécies.</p>
+            <a href="#catalogo" class="btn btn-secondary fade-in">Conheça nosso catálogo</a>
+        </div>
+    </section>
+
+    <!-- Sobre -->
+    <section id="sobre">
+        <div class="container">
+            <div class="section-title">
+                <h2>Sobre o Criadouro</h2>
+            </div>
+            
+            <div class="sobre-content">
+                <div class="sobre-img slide-in-left">
+                    <img src="https://images.unsplash.com/photo-1593069567131-53a0614dde1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Criadouro de aves">
+                </div>
+                
+                <div class="sobre-text slide-in-right">
+                    <h3>Excelência na Criação de Aves desde 2003</h3>
+                    <p>Nosso criadouro é referência nacional na criação de aves ornamentais, exóticas e de produção. Com infraestrutura moderna e profissionais qualificados, garantimos o bem-estar animal e a qualidade genética de nossas aves.</p>
+                    <p>Atuamos com rigorosos protocolos sanitários e nutricionais, assegurando animais saudáveis e adaptados. Nossa missão é proporcionar aos criadores e entusiastas aves de excelência para exposições, produção ou simplesmente para admiração.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Saúde Garantida</h4>
+                            <p>Todas as aves com acompanhamento veterinário e vacinação em dia.</p>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-truck"></i>
+                            <h4>Entrega Nacional</h4>
+                            <p>Transporte especializado para todo o Brasil com segurança.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo -->
+    <section id="catalogo" class="catalogo">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nosso Catálogo</h2>
+                <p>Conheça algumas das espécies que criamos com cuidado e dedicação</p>
+            </div>
+            
+            <div class="filtro-categorias">
+                <button class="filtro-btn active" data-filter="todos">Todas</button>
+                <button class="filtro-btn" data-filter="ornamentais">Ornamentais</button>
+                <button class="filtro-btn" data-filter="exoticas">Exóticas</button>
+                <button class="filtro-btn" data-filter="producao">Produção</button>
+            </div>
+            
+            <div class="grade-aves">
+                <!-- Ave 1 -->
+                <div class="ave-card" data-category="ornamentais">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1552728089-57bdde30beb3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" alt="Pavão Real">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Ornamental</span>
+                        <h3>Pavão Real Indiano</h3>
+                        <p>Majestosa ave ornamental conhecida por sua cauda colorida e impressionante display de acasalamento.</p>
+                        <div class="ave-price">R$ 1.200,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+                
+                <!-- Ave 2 -->
+                <div class="ave-card" data-category="exoticas">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1572402230267-f3e267c1e5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1476&q=80" alt="Arara Azul">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Exótica</span>
+                        <h3>Arara Azul</h3>
+                        <p>Espécie brasileira de grande porte, conhecida por sua inteligência e bela plumagem azul.</p>
+                        <div class="ave-price">R$ 8.500,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+                
+                <!-- Ave 3 -->
+                <div class="ave-card" data-category="producao">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1589923186741-b7d59d6b2c4d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Galinha Caipira">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Produção</span>
+                        <h3>Galinha Caipira Melhorada</h3>
+                        <p>Raça selecionada para alta produção de ovos e carne de qualidade superior.</p>
+                        <div class="ave-price">R$ 35,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+                
+                <!-- Ave 4 -->
+                <div class="ave-card" data-category="ornamentais">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Faisão Dourado">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Ornamental</span>
+                        <h3>Faisão Dourado</h3>
+                        <p>Originário da China, este faisão é uma das aves ornamentais mais coloridas e apreciadas.</p>
+                        <div class="ave-price">R$ 450,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+                
+                <!-- Ave 5 -->
+                <div class="ave-card" data-category="exoticas">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1551085254-e96b210db58a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Tucano">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Exótica</span>
+                        <h3>Tucano-de-bico-verde</h3>
+                        <p>Ícone da fauna brasileira, famoso por seu bico colorido e personalidade marcante.</p>
+                        <div class="ave-price">R$ 3.200,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+                
+                <!-- Ave 6 -->
+                <div class="ave-card" data-category="producao">
+                    <div class="ave-img">
+                        <img src="https://images.unsplash.com/photo-1579168765467-3b235f938439?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" alt="Codorna">
+                    </div>
+                    <div class="ave-info">
+                        <span class="ave-category">Produção</span>
+                        <h3>Codorna Japonesa</h3>
+                        <p>Ideal para produção de ovos em pequenos espaços. Alta produtividade e rápido retorno.</p>
+                        <div class="ave-price">R$ 12,00</div>
+                        <a href="#contato" class="btn">Consultar disponibilidade</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato">
+        <div class="container">
+            <div class="section-title">
+                <h2>Entre em Contato</h2>
+                <p>Tire suas dúvidas, solicite orçamentos ou agende uma visita ao nosso criadouro</p>
+            </div>
+            
+            <div class="contato-container">
+                <div class="contato-info">
+                    <div class="info-item slide-in-left">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Endereço</h4>
+                            <p>Rodovia BR-101, Km 245, S/N<br>Santa Maria/RS</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item slide-in-left">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telefone</h4>
+                            <p>(55) 3222-3344<br>(55) 99988-7766 (WhatsApp)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item slide-in-left">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>E-mail</h4>
+                            <p>contato@criadouropremium.com.br</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item slide-in-left">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horário de Atendimento</h4>
+                            <p>Segunda a Sexta: 8h às 18h<br>Sábado: 8h às 12h</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-contato slide-in-right">
+                    <form id="form-contato">
+                        <div class="form-group">
+                            <label for="nome">Nome completo</label>
+                            <input type="text" id="nome" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="assunto">Assunto</label>
+                            <select id="assunto" class="form-control" required>
+                                <option value="">Selecione...</option>
+                                <option value="orcamento">Solicitar orçamento</option>
+                                <option value="duvida">Tirar dúvidas</option>
+                                <option value="visita">Agendar visita</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mensagem">Mensagem</label>
+                            <textarea id="mensagem" class="form-control" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Criadouro Premium</h3>
+                    <p>Especializados na criação de aves ornamentais, exóticas e de produção com mais de 20 anos de experiência.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#sobre">Sobre nós</a></li>
+                        <li><a href="#catalogo">Catálogo de aves</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Nossas Aves</h3>
+                    <ul>
+                        <li><a href="#catalogo">Aves Ornamentais</a></li>
+                        <li><a href="#catalogo">Aves Exóticas</a></li>
+                        <li><a href="#catalogo">Aves de Produção</a></li>
+                        <li><a href="#catalogo">Aves para Exposição</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Inscreva-se para receber novidades e promoções.</p>
+                    <div class="form-group">
+                        <input type="email" class="form-control" placeholder="Seu e-mail">
+                        <button class="btn" style="margin-top: 10px; width: 100%;">Inscrever</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Criadouro Premium. Todos os direitos reservados.</p>
+                <p>CNPJ: 12.345.678/0001-90 | Licença IBAMA: 987654321</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu móvel
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navMenu.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Filtro do catálogo
+        const filterBtns = document.querySelectorAll('.filtro-btn');
+        const aveCards = document.querySelectorAll('.ave-card');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const filter = btn.getAttribute('data-filter');
+                
+                aveCards.forEach(card => {
+                    if (filter === 'todos' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // Form submission
+        const contactForm = document.getElementById('form-contato');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Aqui normalmente enviaríamos os dados para um servidor
+            // Vamos simular um envio bem-sucedido
+            alert('Obrigado pelo seu contato! Entraremos em contato em breve.');
+            contactForm.reset();
+        });
+        
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements for scroll animations
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Initialize with some animations
+        window.addEventListener('DOMContentLoaded', () => {
+            // Trigger initial animations
+            document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('visible');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

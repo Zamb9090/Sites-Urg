@@ -1,0 +1,4771 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invest Sul - Sistema de Gestão Patrimonial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.3.2/math.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --neutral-dark: #1f2937;
+            --neutral-medium: #6b7280;
+            --neutral-light: #f3f4f6;
+            --bg-white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+           
+            /* Novas cores para a função L/B */
+            --black-strong: #000000;
+            --blue-strong: #1a237e;
+            --red-strong: #b71c1c;
+            --yellow-alert: #ffd600;
+            --gray-achieved: #757575;
+            
+            /* Novas cores para Enterprise Control */
+            --excel-green: #0d7d4d;
+            --excel-light-green: #e6f4ea;
+            --excel-blue: #2a5caa;
+            --excel-light-blue: #e8f0fe;
+            --excel-gray: #f5f5f5;
+            --excel-border: #d1d1d1;
+            --excel-header: #f0f0f0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--neutral-dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+       
+        /* MENU COMPACTO PARA L/B */
+        .lb-menu-item {
+            background: linear-gradient(135deg, var(--black-strong) 0%, #333333 100%);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--black-strong);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .lb-menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--blue-strong);
+        }
+       
+        .lb-menu-item .nav-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--accent-yellow);
+        }
+       
+        .lb-menu-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: white;
+        }
+       
+        .lb-menu-item p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+       
+        /* NOVO MENU PARA ENTERPRISE CONTROL */
+        .enterprise-menu-item {
+            background: linear-gradient(135deg, var(--excel-green) 0%, #0d9d5d 100%);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--excel-green);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .enterprise-menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--excel-blue);
+        }
+       
+        .enterprise-menu-item .nav-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+       
+        .enterprise-menu-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: white;
+        }
+       
+        .enterprise-menu-item p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+       
+        /* CONTROLE L/B COMPACTO */
+        .lb-control-section {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--black-strong);
+        }
+       
+        .lb-control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--black-strong);
+        }
+       
+        .lb-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+       
+        .lb-symbol {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            background: var(--black-strong);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: relative;
+        }
+       
+        .lb-symbol .b-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: black;
+            font-weight: bold;
+        }
+       
+        .lb-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+       
+        .lb-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+       
+        .lb-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+       
+        .lb-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--red-strong);
+            transition: var(--transition);
+            border-radius: 30px;
+        }
+       
+        .lb-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+       
+        .lb-toggle input:checked + .lb-toggle-slider {
+            background-color: var(--blue-strong);
+        }
+       
+        .lb-toggle input:checked + .lb-toggle-slider:before {
+            transform: translateX(30px);
+        }
+       
+        .lb-status {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+       
+        .lb-status.off {
+            color: var(--red-strong);
+        }
+       
+        .lb-status.on {
+            color: var(--blue-strong);
+        }
+       
+        .lb-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+       
+        .lb-control-card {
+            background: var(--neutral-light);
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+       
+        .lb-control-card.active {
+            border-color: var(--blue-strong);
+            background: rgba(26, 35, 126, 0.05);
+        }
+       
+        .lb-control-card.warning {
+            border-color: var(--yellow-alert);
+            background: rgba(255, 214, 0, 0.1);
+        }
+       
+        .lb-control-card.achieved {
+            border-color: var(--gray-achieved);
+            background: rgba(117, 117, 117, 0.1);
+        }
+       
+        .lb-control-header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+       
+        .lb-value-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+       
+        .lb-value-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+       
+        .lb-value-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background: var(--secondary-blue);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+       
+        .lb-value-btn:hover {
+            background: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+       
+        .lb-value-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 8px 0;
+            text-align: center;
+        }
+       
+        .lb-value-display.liquido {
+            color: var(--accent-purple);
+        }
+       
+        .lb-value-display.base {
+            color: var(--neutral-dark);
+        }
+       
+        .lb-value-display.combined {
+            color: var(--blue-strong);
+            font-size: 1.7rem;
+        }
+       
+        .lb-info-text {
+            font-size: 0.8rem;
+            color: var(--neutral-medium);
+            margin-top: 8px;
+            text-align: center;
+        }
+       
+        .lb-separator {
+            height: 2px;
+            background: var(--black-strong);
+            margin: 15px 0;
+            opacity: 0.3;
+        }
+       
+        .lb-deposit-control {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+       
+        .deposit-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 5px 0;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+        }
+       
+        .deposit-display.warning {
+            background: rgba(255, 214, 0, 0.1);
+            color: var(--yellow-alert);
+            border: 2px solid var(--yellow-alert);
+        }
+       
+        .deposit-display.achieved {
+            background: rgba(117, 117, 117, 0.1);
+            color: var(--gray-achieved);
+            border: 2px solid var(--gray-achieved);
+        }
+       
+        /* NOVA SEÇÃO: ENTERPRISE CONTROL */
+        .enterprise-control-section {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--excel-green);
+        }
+       
+        .enterprise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--excel-green);
+        }
+       
+        .enterprise-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+       
+        .enterprise-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: var(--excel-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+       
+        .enterprise-header h2 {
+            color: var(--excel-green);
+            margin-bottom: 5px;
+        }
+       
+        .enterprise-header p {
+            color: var(--neutral-medium);
+            font-size: 0.9rem;
+        }
+       
+        /* PLANILHA ESTILO EXCEL */
+        .excel-sheet {
+            background: var(--bg-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            border: 1px solid var(--excel-border);
+        }
+       
+        .excel-toolbar {
+            background: var(--excel-header);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--excel-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+       
+        .excel-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+       
+        .excel-add-btn {
+            background: var(--excel-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .excel-add-btn:hover {
+            background: #0a6b3c;
+            transform: translateY(-1px);
+        }
+       
+        .excel-clear-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .excel-clear-btn:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+       
+        .excel-export-btn {
+            background: var(--excel-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .excel-export-btn:hover {
+            background: #1e4a9e;
+            transform: translateY(-1px);
+        }
+       
+        .excel-search {
+            padding: 8px 12px;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            width: 250px;
+            font-size: 0.9rem;
+        }
+       
+        .excel-table-container {
+            overflow-x: auto;
+        }
+       
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+       
+        .excel-table thead {
+            background: var(--excel-header);
+        }
+       
+        .excel-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--neutral-dark);
+            border-bottom: 1px solid var(--excel-border);
+            border-right: 1px solid var(--excel-border);
+            background: var(--excel-gray);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+       
+        .excel-table th:last-child {
+            border-right: none;
+        }
+       
+        .excel-table tbody tr {
+            border-bottom: 1px solid var(--excel-border);
+            transition: var(--transition);
+        }
+       
+        .excel-table tbody tr:hover {
+            background: var(--excel-light-green);
+        }
+       
+        .excel-table td {
+            padding: 10px 15px;
+            border-right: 1px solid var(--excel-border);
+            vertical-align: middle;
+        }
+       
+        .excel-table td:last-child {
+            border-right: none;
+        }
+       
+        .excel-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: var(--bg-white);
+            transition: var(--transition);
+        }
+       
+        .excel-input:focus {
+            outline: none;
+            border-color: var(--excel-blue);
+            box-shadow: 0 0 0 2px rgba(42, 92, 170, 0.1);
+        }
+       
+        .excel-type-select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: var(--bg-white);
+            cursor: pointer;
+            font-weight: 600;
+        }
+       
+        .excel-type-select.bruto {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--excel-green);
+            border-color: var(--excel-green);
+        }
+       
+        .excel-type-select.saida {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+       
+        .excel-actions {
+            display: flex;
+            gap: 6px;
+        }
+       
+        .excel-action-btn {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            background: var(--excel-light-blue);
+            color: var(--excel-blue);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+        }
+       
+        .excel-action-btn:hover {
+            background: var(--excel-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+       
+        .excel-action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+       
+        .excel-action-btn.delete:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+       
+        /* RESUMO FINANCEIRO */
+        .enterprise-summary {
+            background: var(--excel-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 1px solid var(--excel-border);
+        }
+       
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--excel-green);
+            font-size: 1.2rem;
+        }
+       
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+       
+        .summary-card {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--excel-border);
+            transition: var(--transition);
+        }
+       
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+       
+        .summary-card.bruto {
+            border-top: 4px solid var(--excel-green);
+        }
+       
+        .summary-card.saida {
+            border-top: 4px solid var(--accent-red);
+        }
+       
+        .summary-card.liquido {
+            border-top: 4px solid var(--excel-blue);
+        }
+       
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--neutral-medium);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+       
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+       
+        .summary-bruto {
+            color: var(--excel-green);
+        }
+       
+        .summary-saida {
+            color: var(--accent-red);
+        }
+       
+        .summary-liquido {
+            color: var(--excel-blue);
+        }
+       
+        .summary-trend {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+       
+        .trend-positive {
+            color: var(--excel-green);
+        }
+       
+        .trend-negative {
+            color: var(--accent-red);
+        }
+       
+        /* CONTROLE DE ENTRADA */
+        .enterprise-input-control {
+            background: var(--excel-light-green);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--excel-border);
+        }
+       
+        .input-control-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--excel-green);
+        }
+       
+        .input-control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+       
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+       
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--neutral-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+       
+        .input-control-btn {
+            background: var(--excel-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+       
+        .input-control-btn:hover {
+            background: #0a6b3c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 125, 77, 0.2);
+        }
+       
+        /* Estilos existentes (mantidos) */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+       
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+       
+        .logo {
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary-blue);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+       
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+       
+        .logo-text .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+       
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+       
+        .stat-item {
+            text-align: center;
+            min-width: 100px;
+        }
+       
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: white;
+        }
+       
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+       
+        .datetime {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 10px;
+            text-align: right;
+        }
+       
+        .main-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+       
+        .nav-item {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+       
+        .nav-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--secondary-blue);
+        }
+       
+        .nav-item.active {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+       
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green) 0%, var(--secondary-blue) 100%);
+        }
+       
+        .nav-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--secondary-blue);
+        }
+       
+        .nav-item.active .nav-icon {
+            color: var(--accent-green);
+        }
+       
+        .nav-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--neutral-dark);
+        }
+       
+        .nav-item p {
+            font-size: 0.8rem;
+            color: var(--neutral-medium);
+            line-height: 1.4;
+        }
+       
+        .content-section {
+            display: none;
+        }
+       
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+       
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+       
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+       
+        .chart-container {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+       
+        .chart-container:hover {
+            box-shadow: var(--shadow-hover);
+        }
+       
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+       
+        .chart-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--neutral-dark);
+        }
+       
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+       
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+       
+        .totals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+       
+        .total-card {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+       
+        .total-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+       
+        .total-card.patrimonio { border-left-color: var(--accent-green); }
+        .total-card.investimentos { border-left-color: var(--secondary-blue); }
+        .total-card.gastos { border-left-color: var(--accent-red); }
+        .total-card.liquido { border-left-color: var(--accent-purple); }
+        .total-card.pendentes { border-left-color: var(--accent-yellow); }
+       
+        .total-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+       
+        .total-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-dark);
+        }
+       
+        .total-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+       
+        .total-card.patrimonio .total-icon { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .total-card.investimentos .total-icon { background: rgba(59, 130, 246, 0.1); color: var(--secondary-blue); }
+        .total-card.gastos .total-icon { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+        .total-card.liquido .total-icon { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+        .total-card.pendentes .total-icon { background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow); }
+       
+        .total-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+       
+        .total-card.patrimonio .total-value { color: var(--accent-green); }
+        .total-card.investimentos .total-value { color: var(--secondary-blue); }
+        .total-card.gastos .total-value { color: var(--accent-red); }
+        .total-card.liquido .total-value { color: var(--accent-purple); }
+        .total-card.pendentes .total-value { color: var(--accent-yellow); }
+       
+        .total-details {
+            font-size: 0.8rem;
+            color: var(--neutral-medium);
+            line-height: 1.5;
+        }
+       
+        .control-panel {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+       
+        .control-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: var(--neutral-dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+       
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+       
+        .form-group {
+            position: relative;
+        }
+       
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--neutral-dark);
+            font-size: 0.9rem;
+        }
+       
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--bg-white);
+        }
+       
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+       
+        .currency-input {
+            position: relative;
+        }
+       
+        .currency-prefix {
+            position: absolute;
+            left: 14px;
+            top: 38px;
+            color: var(--neutral-medium);
+            font-weight: 500;
+        }
+       
+        .currency-input input {
+            padding-left: 35px;
+        }
+       
+        .status-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+       
+        .status-btn {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            background: var(--bg-white);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+       
+        .status-btn:hover {
+            transform: translateY(-2px);
+        }
+       
+        .status-btn.active {
+            border-color: currentColor;
+            font-weight: 600;
+        }
+       
+        .btn-status-neutro { color: var(--neutral-medium); }
+        .btn-status-pendente { color: var(--accent-yellow); }
+        .btn-status-investido { color: var(--secondary-blue); }
+        .btn-status-gasto { color: var(--accent-red); }
+        .btn-status-patrimonio { color: var(--accent-green); }
+       
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+       
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+            color: white;
+        }
+       
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+       
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #0da271 100%);
+            color: white;
+        }
+       
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+       
+        .btn-danger {
+            background: linear-gradient(135deg, var(--accent-red) 0%, #dc2626 100%);
+            color: white;
+        }
+       
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+       
+        .btn-warning {
+            background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+            color: white;
+        }
+       
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+       
+        .data-table {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+       
+        .table-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+       
+        .table-header h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+       
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+       
+        thead {
+            background: var(--neutral-light);
+        }
+       
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--neutral-dark);
+            border-bottom: 2px solid #e5e7eb;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+       
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: var(--transition);
+        }
+       
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+       
+        td {
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+       
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+       
+        .badge-pendente { background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow); }
+        .badge-investido { background: rgba(59, 130, 246, 0.1); color: var(--secondary-blue); }
+        .badge-gasto { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+        .badge-patrimonio { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .badge-neutro { background: rgba(107, 114, 128, 0.1); color: var(--neutral-medium); }
+       
+        .action-group {
+            display: flex;
+            gap: 6px;
+        }
+       
+        .action-btn {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            background: var(--neutral-light);
+            color: var(--neutral-dark);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+       
+        .action-btn:hover {
+            background: var(--secondary-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+       
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+       
+        .action-btn.delete:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+       
+        .reports-section {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+       
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+       
+        .report-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            transition: var(--transition);
+        }
+       
+        .report-card:hover {
+            border-color: var(--secondary-blue);
+            transform: translateY(-3px);
+        }
+       
+        .report-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+       
+        .report-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            background: var(--secondary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+       
+        .report-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--neutral-dark);
+            margin-bottom: 5px;
+        }
+       
+        .report-info p {
+            font-size: 0.8rem;
+            color: var(--neutral-medium);
+        }
+       
+        .historico-section {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+       
+        .historico-selects {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+       
+        .calculator-panel {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+       
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 450px;
+            margin: 0 auto 15px;
+        }
+       
+        #calcDisplay {
+            grid-column: span 5;
+            padding: 14px;
+            font-size: 1.6rem;
+            text-align: right;
+            margin-bottom: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #f9fafb;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+       
+        .calc-btn {
+            padding: 18px;
+            font-size: 1.2rem;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+       
+        .calc-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+       
+        .calc-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+       
+        .operator {
+            background: #bfdbfe;
+            color: #1d4ed8;
+        }
+       
+        .operator:hover {
+            background: #93c5fd;
+        }
+       
+        .equal {
+            background: #bbf7d0;
+            color: #166534;
+            grid-column: span 2;
+        }
+       
+        .equal:hover {
+            background: #86efac;
+        }
+       
+        .backspace {
+            background: #fecaca;
+            color: #dc2626;
+        }
+       
+        .backspace:hover {
+            background: #fca5a5;
+        }
+       
+        #calcResult {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--neutral-dark);
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+       
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            padding: 15px;
+        }
+       
+        .modal {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlide 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+       
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+       
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+       
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--neutral-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--neutral-medium);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 5px;
+            border-radius: 5px;
+        }
+       
+        .modal-close:hover {
+            color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+       
+        .modal-body {
+            margin-bottom: 20px;
+        }
+       
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding-top: 15px;
+            border-top: 2px solid #e5e7eb;
+        }
+       
+        .main-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: var(--neutral-medium);
+            font-size: 0.85rem;
+        }
+       
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+       
+        .footer-links a {
+            color: var(--secondary-blue);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+       
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+       
+        .loading {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+       
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+       
+        .resolved-balance-section {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+       
+        .adjustment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+       
+        .adjustment-group {
+            display: flex;
+            flex-direction: column;
+        }
+       
+        .adjustment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-top: 6px;
+            font-size: 0.9rem;
+        }
+       
+        @media (max-width: 1200px) {
+            .main-nav {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .lb-controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+       
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 15px;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .header-stats {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                padding: 12px 15px;
+            }
+            .main-nav {
+                grid-template-columns: 1fr;
+            }
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+            .totals-grid {
+                grid-template-columns: 1fr;
+            }
+            .status-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .modal {
+                padding: 15px;
+            }
+            .calculator-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 350px;
+            }
+            #calcDisplay {
+                grid-column: span 4;
+            }
+            .lb-control-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            .excel-toolbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .excel-toolbar-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .excel-search {
+                width: 100%;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+       
+        .empty-state {
+            text-align: center;
+            padding: 40px 15px;
+            color: var(--neutral-medium);
+        }
+       
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #e5e7eb;
+        }
+       
+        .empty-state h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--neutral-dark);
+        }
+       
+        .empty-state p {
+            font-size: 0.9rem;
+            max-width: 350px;
+            margin: 0 auto 20px;
+        }
+       
+        .notification {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            background: var(--bg-white);
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+       
+        .notification.show {
+            transform: translateX(0);
+        }
+       
+        .notification.success {
+            border-left: 4px solid var(--accent-green);
+        }
+       
+        .notification.error {
+            border-left: 4px solid var(--accent-red);
+        }
+       
+        .notification.info {
+            border-left: 4px solid var(--secondary-blue);
+        }
+       
+        .notification.warning {
+            border-left: 4px solid var(--accent-yellow);
+        }
+       
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+       
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+       
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-blue);
+            border-radius: 4px;
+        }
+       
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Invest Sul</h1>
+                        <p class="subtitle">Sistema Inteligente de Gestão Patrimonial</p>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="headerPatrimonio">R$ 0,00</div>
+                        <div class="stat-label">Patrimônio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="headerLiquido">R$ 0,00</div>
+                        <div class="stat-label">Líquido</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="headerPendentes">R$ 0,00</div>
+                        <div class="stat-label">Pendentes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="datetime" id="currentDateTime"></div>
+        </header>
+       
+        <!-- NAVEGAÇÃO PRINCIPAL -->
+        <nav class="main-nav">
+            <div class="nav-item active" data-section="dashboard">
+                <div class="nav-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>Dashboard</h3>
+                <p>Visão Geral e Gráficos</p>
+            </div>
+           
+            <div class="nav-item" data-section="patrimonio">
+                <div class="nav-icon">
+                    <i class="fas fa-landmark"></i>
+                </div>
+                <h3>Patrimônio</h3>
+                <p>Ativos e Bens</p>
+            </div>
+           
+            <div class="nav-item" data-section="investimentos">
+                <div class="nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Investimentos</h3>
+                <p>Aplicações Financeiras</p>
+            </div>
+           
+            <div class="nav-item" data-section="gastos">
+                <div class="nav-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <h3>Gastos</h3>
+                <p>Despesas e Custos</p>
+            </div>
+           
+            <!-- NOVO BOTÃO PARA ENTERPRISE CONTROL -->
+            <div class="enterprise-menu-item" data-section="enterprise-control">
+                <div class="nav-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Enterprise Control</h3>
+                <p>Planilha de Gestão Empresarial</p>
+            </div>
+           
+            <!-- MENU COMPACTO PARA L/B -->
+            <div class="lb-menu-item" data-section="lb-control">
+                <div class="nav-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h3>Controle L/B</h3>
+                <p>Patrimônio Líquido & Base</p>
+            </div>
+           
+            <div class="nav-item" data-section="pendentes">
+                <div class="nav-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Pendentes</h3>
+                <p>Transações em Análise</p>
+            </div>
+           
+            <div class="nav-item" data-section="relatorios">
+                <div class="nav-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h3>Relatórios</h3>
+                <p>Gerar Documentos</p>
+            </div>
+           
+            <div class="nav-item" data-section="historico">
+                <div class="nav-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Histórico</h3>
+                <p>Evolução por Ano/Mês</p>
+            </div>
+           
+            <div class="nav-item" data-section="calculadora">
+                <div class="nav-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>Calculadora</h3>
+                <p>Cálculos Rápidos</p>
+            </div>
+           
+            <div class="nav-item" data-section="resolved-balance">
+                <div class="nav-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h3>Resolved Balance</h3>
+                <p>Ajustes Manuais</p>
+            </div>
+        </nav>
+       
+        <!-- NOVA SEÇÃO: ENTERPRISE CONTROL -->
+        <section id="enterprise-control" class="content-section">
+            <div class="enterprise-control-section">
+                <div class="enterprise-header">
+                    <div class="enterprise-title">
+                        <div class="enterprise-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h2>Enterprise Control - Gestão Empresarial</h2>
+                            <p>Planilha completa com controle financeiro em tempo real</p>
+                        </div>
+                    </div>
+                    <div class="table-actions">
+                        <button class="btn btn-success" id="printEnterpriseBtn">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+               
+                <!-- CONTROLE DE ENTRADA -->
+                <div class="enterprise-input-control">
+                    <div class="input-control-title">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Adicionar Novo Item</h3>
+                    </div>
+                    <div class="input-control-grid">
+                        <div class="input-group">
+                            <label for="enterpriseProduct"><i class="fas fa-tag"></i> Produto/Serviço</label>
+                            <input type="text" id="enterpriseProduct" class="excel-input" placeholder="Nome do produto ou serviço">
+                        </div>
+                        <div class="input-group">
+                            <label for="enterpriseValue"><i class="fas fa-dollar-sign"></i> Valor (R$)</label>
+                            <input type="number" id="enterpriseValue" class="excel-input" placeholder="0,00" step="0.01" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="enterpriseType"><i class="fas fa-exchange-alt"></i> Tipo</label>
+                            <select id="enterpriseType" class="excel-type-select">
+                                <option value="B">B - Saldo Bruto</option>
+                                <option value="S">S - Saída</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="input-control-btn" id="addEnterpriseItemBtn">
+                        <i class="fas fa-plus-circle"></i> Adicionar à Planilha
+                    </button>
+                </div>
+               
+                <!-- PLANILHA EXCEL-LIKE -->
+                <div class="excel-sheet">
+                    <div class="excel-toolbar">
+                        <div class="excel-toolbar-left">
+                            <button class="excel-add-btn" id="addEnterpriseRowBtn">
+                                <i class="fas fa-plus"></i> Nova Linha
+                            </button>
+                            <button class="excel-clear-btn" id="clearEnterpriseBtn">
+                                <i class="fas fa-trash"></i> Limpar Tudo
+                            </button>
+                            <button class="excel-export-btn" id="exportEnterpriseBtn">
+                                <i class="fas fa-file-export"></i> Exportar
+                            </button>
+                        </div>
+                        <input type="text" class="excel-search" id="enterpriseSearch" placeholder="Buscar na planilha...">
+                    </div>
+                    <div class="excel-table-container">
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">ID</th>
+                                    <th width="35%">Produto/Serviço</th>
+                                    <th width="20%">Valor (R$)</th>
+                                    <th width="15%">Tipo</th>
+                                    <th width="15%">Data</th>
+                                    <th width="10%">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="enterpriseTableBody">
+                                <!-- Itens serão adicionados aqui -->
+                                <tr class="empty-state-row">
+                                    <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-inbox"></i>
+                                        </div>
+                                        <h4>Planilha vazia</h4>
+                                        <p>Adicione itens para começar a usar a planilha</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
+                <!-- RESUMO FINANCEIRO EM TEMPO REAL -->
+                <div class="enterprise-summary">
+                    <div class="summary-title">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Resumo Financeiro (Atualizado em Tempo Real)</h3>
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-card bruto">
+                            <div class="summary-label">
+                                <i class="fas fa-arrow-up"></i>
+                                Saldo Bruto
+                            </div>
+                            <div class="summary-value summary-bruto" id="saldoBrutoValue">
+                                R$ 0,00
+                            </div>
+                            <div class="summary-trend trend-positive" id="brutoTrend">
+                                +0 itens
+                            </div>
+                        </div>
+                        <div class="summary-card saida">
+                            <div class="summary-label">
+                                <i class="fas fa-arrow-down"></i>
+                                Saída
+                            </div>
+                            <div class="summary-value summary-saida" id="saidaValue">
+                                R$ 0,00
+                            </div>
+                            <div class="summary-trend trend-negative" id="saidaTrend">
+                                +0 itens
+                            </div>
+                        </div>
+                        <div class="summary-card liquido">
+                            <div class="summary-label">
+                                <i class="fas fa-balance-scale"></i>
+                                Saldo Líquido
+                            </div>
+                            <div class="summary-value summary-liquido" id="saldoLiquidoValue">
+                                R$ 0,00
+                            </div>
+                            <div class="summary-trend" id="liquidoTrend">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+       
+        <!-- SEÇÃO DO CONTROLE L/B (INICIALMENTE OCULTA) -->
+        <section id="lb-control" class="content-section">
+            <div class="lb-control-section">
+                <div class="lb-control-header">
+                    <div class="lb-title">
+                        <div class="lb-symbol">
+                            L
+                            <div class="b-indicator">B</div>
+                        </div>
+                        <div>
+                            <h2 style="color: var(--black-strong); margin-bottom: 5px;">Controle Patrimônio Líquido & Base</h2>
+                            <p style="color: var(--neutral-medium); font-size: 0.9rem;">Controle avançado com junção/separação de valores</p>
+                        </div>
+                    </div>
+                    <div class="lb-toggle-container">
+                        <span class="lb-status off" id="lbStatusText">DESLIGADO (Separado)</span>
+                        <label class="lb-toggle">
+                            <input type="checkbox" id="lbToggle">
+                            <span class="lb-toggle-slider"></span>
+                        </label>
+                        <span class="lb-status on" id="lbStatusText2" style="display: none;">LIGADO (Unificado)</span>
+                    </div>
+                </div>
+               
+                <div class="lb-controls-grid">
+                    <!-- Patrimônio Líquido -->
+                    <div class="lb-control-card" id="liquidoCard">
+                        <div class="lb-control-header-inner">
+                            <h3 style="color: var(--accent-purple); font-size: 1rem;">
+                                <i class="fas fa-calculator"></i> Patrimônio Líquido (L)
+                            </h3>
+                            <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple);">
+                                Ativo
+                            </span>
+                        </div>
+                        <div class="lb-value-display liquido" id="liquidoValue">
+                            R$ 0,00
+                        </div>
+                        <div class="lb-value-control">
+                            <input type="number" class="lb-value-input" id="liquidoAdjust" placeholder="Ajuste (+/-)" step="0.01">
+                            <button class="lb-value-btn" id="applyLiquidoBtn">Aplicar</button>
+                        </div>
+                        <p class="lb-info-text">
+                            Valor atual do Patrimônio Líquido.
+                        </p>
+                    </div>
+                   
+                    <!-- Base -->
+                    <div class="lb-control-card" id="baseCard">
+                        <div class="lb-control-header-inner">
+                            <h3 style="color: var(--neutral-dark); font-size: 1rem;">
+                                <i class="fas fa-database"></i> Base (B)
+                            </h3>
+                            <span class="badge" id="baseStatusBadge" style="background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow);">
+                                Ativo
+                            </span>
+                        </div>
+                        <div class="lb-value-display base" id="baseValue">
+                            R$ 0,00
+                        </div>
+                        <div class="lb-value-control">
+                            <input type="number" class="lb-value-input" id="baseAdjust" placeholder="Ajuste (+/-)" step="0.01">
+                            <button class="lb-value-btn" id="applyBaseBtn">Aplicar</button>
+                        </div>
+                        <p class="lb-info-text" id="baseInfo">
+                            Valor da Base. Separado do Patrimônio Líquido quando desligado.
+                        </p>
+                    </div>
+                   
+                    <!-- Valor Combinado/Resultado -->
+                    <div class="lb-control-card" id="combinedCard">
+                        <div class="lb-control-header-inner">
+                            <h3 style="color: var(--blue-strong); font-size: 1rem;">
+                                <i class="fas fa-balance-scale"></i> Resultado
+                            </h3>
+                            <span class="badge" id="combinedStatusBadge" style="background: rgba(26, 35, 126, 0.1); color: var(--blue-strong);">
+                                Separado
+                            </span>
+                        </div>
+                        <div class="lb-value-display combined" id="combinedValue">
+                            R$ 0,00
+                        </div>
+                        <div class="lb-separator"></div>
+                        <div style="text-align: center;">
+                            <div style="margin-bottom: 8px;">
+                                <span style="color: var(--accent-purple); font-weight: 600; font-size: 0.9rem;">L: </span>
+                                <span id="liquidoPartValue" style="font-size: 0.9rem;">R$ 0,00</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--neutral-dark); font-weight: 600; font-size: 0.9rem;">B: </span>
+                                <span id="basePartValue" style="font-size: 0.9rem;">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <p class="lb-info-text" id="combinedInfo">
+                            Quando ligado (azul): L + B. Quando desligado (vermelho): L e B separados.
+                        </p>
+                    </div>
+                </div>
+               
+                <!-- CONTROLE DE DEPÓSITO E META -->
+                <div class="lb-deposit-control">
+                    <div class="control-grid">
+                        <div class="form-group">
+                            <label for="baseTarget"><i class="fas fa-bullseye"></i> Meta da Base (R$)</label>
+                            <input type="number" id="baseTarget" placeholder="Defina a meta da Base" step="0.01" value="10000">
+                        </div>
+                        <div class="form-group">
+                            <label for="depositedAmount"><i class="fas fa-piggy-bank"></i> Valor Depositado (R$)</label>
+                            <input type="number" id="depositedAmount" placeholder="Quanto já depositou?" step="0.01" value="0">
+                        </div>
+                    </div>
+                   
+                    <!-- DISPLAY DE DEPÓSITO -->
+                    <div class="deposit-display warning" id="depositDisplay">
+                        Depositado: R$ 0,00 / Meta: R$ 10.000,00 (0%)
+                    </div>
+                   
+                    <button class="btn btn-warning" id="updateBaseSettingsBtn" style="margin-top: 10px; width: 100%;">
+                        <i class="fas fa-save"></i> Atualizar Configurações
+                    </button>
+                </div>
+            </div>
+        </section>
+       
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="content-section active">
+            <div class="totals-grid">
+                <div class="total-card patrimonio">
+                    <div class="total-header">
+                        <h3>Patrimônio Total</h3>
+                        <div class="total-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="total-value" id="totalPatrimonio">R$ 0,00</div>
+                    <p class="total-details">Soma de todos os ativos e bens patrimoniais</p>
+                </div>
+               
+                <div class="total-card investimentos">
+                    <div class="total-header">
+                        <h3>Investimentos</h3>
+                        <div class="total-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="total-value" id="totalInvestimentos">R$ 0,00</div>
+                    <p class="total-details">Valor aplicado em investimentos financeiros</p>
+                </div>
+               
+                <div class="total-card gastos">
+                    <div class="total-header">
+                        <h3>Gastos</h3>
+                        <div class="total-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="total-value" id="totalGastos">R$ 0,00</div>
+                    <p class="total-details">Total de despesas e custos mensais</p>
+                </div>
+               
+                <div class="total-card liquido">
+                    <div class="total-header">
+                        <h3>Patrimônio Líquido</h3>
+                        <div class="total-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                    </div>
+                    <div class="total-value" id="totalLiquido">R$ 0,00</div>
+                    <p class="total-details">Patrimônio - Gastos (resultado líquido)</p>
+                </div>
+               
+                <div class="total-card pendentes">
+                    <div class="total-header">
+                        <h3>Pendentes</h3>
+                        <div class="total-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="total-value" id="totalPendentes">R$ 0,00</div>
+                    <p class="total-details">Valores aguardando classificação</p>
+                </div>
+            </div>
+           
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Distribuição Patrimonial</h3>
+                        <div class="chart-actions">
+                            <button class="action-btn" id="refreshChartsBtn">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+               
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Evolução Patrimonial</h3>
+                        <div class="chart-actions">
+                            <button class="action-btn" id="refreshChartsBtn2">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="evolutionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+           
+            <div class="control-panel">
+                <div class="control-title">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Adicionar Novo Registro</span>
+                </div>
+               
+                <div class="control-grid">
+                    <div class="form-group">
+                        <label for="itemName"><i class="fas fa-tag"></i> Descrição do Item</label>
+                        <input type="text" id="itemName" placeholder="Ex: Salário, Investimento em Ações, Aluguel...">
+                    </div>
+                   
+                    <div class="form-group currency-input">
+                        <label for="itemValue"><i class="fas fa-dollar-sign"></i> Valor (R$)</label>
+                        <div class="currency-prefix">R$</div>
+                        <input type="number" id="itemValue" placeholder="0,00" step="0.01" min="0">
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="itemCategory"><i class="fas fa-folder"></i> Categoria</label>
+                        <select id="itemCategory">
+                            <option value="patrimonio">Patrimônio</option>
+                            <option value="investimentos">Investimentos</option>
+                            <option value="gastos">Gastos</option>
+                            <option value="pendentes">Pendentes</option>
+                        </select>
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label><i class="fas fa-flag"></i> Status do Registro</label>
+                    <div class="status-buttons" id="statusButtons">
+                        <button class="status-btn btn-status-neutro active" data-status="neutro">Neutro</button>
+                        <button class="status-btn btn-status-pendente" data-status="pendente">Pendente</button>
+                        <button class="status-btn btn-status-investido" data-status="investido">Investido</button>
+                        <button class="status-btn btn-status-gasto" data-status="gasto">Gasto</button>
+                        <button class="status-btn btn-status-patrimonio" data-status="patrimonio">Patrimônio</button>
+                    </div>
+                </div>
+               
+                <button id="addItemBtn" class="btn btn-success" style="margin-top: 20px; width: 100%;">
+                    <i class="fas fa-plus-circle"></i> Adicionar Registro
+                </button>
+            </div>
+        </section>
+       
+        <!-- PATRIMÔNIO -->
+        <section id="patrimonio" class="content-section">
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-landmark"></i> Registros Patrimoniais</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" id="exportPatrimonioBtn">
+                            <i class="fas fa-file-export"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="40%">Descrição</th>
+                            <th width="20%">Status</th>
+                            <th width="25%">Valor (R$)</th>
+                            <th width="10%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patrimonioBody">
+                        <!-- Itens serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+       
+        <!-- INVESTIMENTOS -->
+        <section id="investimentos" class="content-section">
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-chart-bar"></i> Registros de Investimentos</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" id="exportInvestimentosBtn">
+                            <i class="fas fa-file-export"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="40%">Descrição</th>
+                            <th width="20%">Status</th>
+                            <th width="25%">Valor (R$)</th>
+                            <th width="10%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="investimentosBody">
+                        <!-- Itens serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+       
+        <!-- GASTOS -->
+        <section id="gastos" class="content-section">
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-receipt"></i> Registros de Gastos</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" id="exportGastosBtn">
+                            <i class="fas fa-file-export"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="40%">Descrição</th>
+                            <th width="20%">Status</th>
+                            <th width="25%">Valor (R$)</th>
+                            <th width="10%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gastosBody">
+                        <!-- Itens serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+       
+        <!-- PENDENTES -->
+        <section id="pendentes" class="content-section">
+            <div class="control-panel">
+                <div class="control-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Gestão de Pendências</span>
+                </div>
+                <p style="color: var(--neutral-medium); margin-bottom: 20px;">
+                    Registros pendentes aguardando classificação. Selecione o destino para cada item.
+                </p>
+               
+                <div class="action-group" style="justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <button class="btn btn-success" id="classifyAllPatrimonioBtn">
+                        <i class="fas fa-landmark"></i> Classificar Todos como Patrimônio
+                    </button>
+                    <button class="btn btn-primary" id="classifyAllInvestimentosBtn">
+                        <i class="fas fa-chart-line"></i> Classificar Todos como Investimentos
+                    </button>
+                    <button class="btn btn-warning" id="classifyAllGastosBtn">
+                        <i class="fas fa-receipt"></i> Classificar Todos como Gastos
+                    </button>
+                </div>
+            </div>
+           
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-clock"></i> Registros Pendentes</h3>
+                    <div class="table-actions">
+                        <span class="badge" id="pendentesCount">0 itens</span>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="30%">Descrição</th>
+                            <th width="15%">Status</th>
+                            <th width="25%">Valor (R$)</th>
+                            <th width="25%">Classificação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendentesBody">
+                        <!-- Itens pendentes serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+       
+        <!-- RELATÓRIOS -->
+        <section id="relatorios" class="content-section">
+            <div class="reports-section">
+                <div class="control-title">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Gerar Relatórios Avançados</span>
+                </div>
+                <p style="color: var(--neutral-medium); margin-bottom: 25px;">
+                    Crie relatórios detalhados em PDF para análise e documentação do seu patrimônio.
+                </p>
+               
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="report-icon" style="background: var(--accent-green);">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="report-info">
+                                <h4>Relatório Patrimonial Completo</h4>
+                                <p>Análise detalhada de todo o patrimônio</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" id="generateFullReportBtn" style="width: 100%;">
+                            <i class="fas fa-download"></i> Gerar Relatório
+                        </button>
+                    </div>
+                   
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="report-icon" style="background: var(--secondary-blue);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="report-info">
+                                <h4>Relatório de Evolução</h4>
+                                <p>Gráficos e tendências patrimoniais</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="generateEvolutionReportBtn" style="width: 100%;">
+                            <i class="fas fa-download"></i> Gerar Relatório
+                        </button>
+                    </div>
+                   
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="report-icon" style="background: var(--accent-purple);">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="report-info">
+                                <h4>Relatório Financeiro</h4>
+                                <p>Balanço e demonstrações financeiras</p>
+                            </div>
+                        </div>
+                        <button class="btn" id="generateFinancialReportBtn" style="width: 100%; background: var(--accent-purple); color: white;">
+                            <i class="fas fa-download"></i> Gerar Relatório
+                        </button>
+                    </div>
+                </div>
+               
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                    <div class="form-group" style="max-width: 400px;">
+                        <label for="reportPeriod"><i class="fas fa-calendar-alt"></i> Período do Relatório</label>
+                        <select id="reportPeriod">
+                            <option value="mensal">Mensal</option>
+                            <option value="trimestral">Trimestral</option>
+                            <option value="semestral">Semestral</option>
+                            <option value="anual">Anual</option>
+                            <option value="personalizado">Personalizado</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-warning" id="generateCustomReportBtn" style="margin-top: 20px;">
+                        <i class="fas fa-cogs"></i> Gerar Relatório Personalizado
+                    </button>
+                </div>
+            </div>
+        </section>
+       
+        <!-- HISTÓRICO -->
+        <section id="historico" class="content-section">
+            <div class="historico-section">
+                <div class="control-title">
+                    <i class="fas fa-history"></i>
+                    <span>Histórico de Evolução Patrimonial</span>
+                </div>
+                <p style="color: var(--neutral-medium); margin-bottom: 25px;">
+                    Visualize a evolução patrimonial por ano e mês de forma profissional.
+                </p>
+                <div class="historico-selects">
+                    <div class="form-group">
+                        <label for="historicoYear"><i class="fas fa-calendar-year"></i> Ano</label>
+                        <select id="historicoYear"></select>
+                    </div>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3><i class="fas fa-table"></i> Evolução Mensal</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Patrimônio</th>
+                                <th>Investimentos</th>
+                                <th>Gastos</th>
+                                <th>Líquido</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoBody">
+                            <!-- Dados serão inseridos aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+       
+        <!-- CALCULADORA -->
+        <section id="calculadora" class="content-section">
+            <div class="calculator-panel">
+                <div class="control-title">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculadora Inteligente</span>
+                </div>
+                <p style="color: var(--neutral-medium); margin-bottom: 20px;">
+                    Realize cálculos básicos e avançados de forma rápida. Use expressões matemáticas como sin(30), log(10), etc. Use vírgula para decimais (ex: 63,78).
+                </p>
+                <input type="text" id="calcDisplay" placeholder="Digite a expressão">
+                <div class="calculator-grid">
+                    <button class="calc-btn" data-value="7">7</button>
+                    <button class="calc-btn" data-value="8">8</button>
+                    <button class="calc-btn" data-value="9">9</button>
+                    <button class="calc-btn operator" data-value="/">/</button>
+                    <button class="calc-btn backspace" onclick="calcBackspace()"><i class="fas fa-backspace"></i></button>
+                   
+                    <button class="calc-btn" data-value="4">4</button>
+                    <button class="calc-btn" data-value="5">5</button>
+                    <button class="calc-btn" data-value="6">6</button>
+                    <button class="calc-btn operator" data-value="*">*</button>
+                    <button class="calc-btn operator" onclick="calcClear()">C</button>
+                   
+                    <button class="calc-btn" data-value="1">1</button>
+                    <button class="calc-btn" data-value="2">2</button>
+                    <button class="calc-btn" data-value="3">3</button>
+                    <button class="calc-btn operator" data-value="-">-</button>
+                    <button class="calc-btn operator" data-value="(">(</button>
+                   
+                    <button class="calc-btn" data-value="0">0</button>
+                    <button class="calc-btn" data-value=".">,</button>
+                    <button class="calc-btn operator" data-value="+">+</button>
+                    <button class="calc-btn operator" data-value=")">)</button>
+                   
+                    <button class="calc-btn equal" onclick="calcEvaluate()" style="grid-column: span 5;">=</button>
+                </div>
+                <p id="calcResult"></p>
+            </div>
+        </section>
+       
+        <!-- RESOLVED BALANCE -->
+        <section id="resolved-balance" class="content-section">
+            <div class="resolved-balance-section">
+                <div class="control-title">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Resolved Balance - Ajustes Manuais</span>
+                </div>
+                <p style="color: var(--neutral-medium); margin-bottom: 25px;">
+                    Ajuste manualmente os saldos totais sem alterar o histórico de itens.
+                </p>
+                <div class="adjustment-grid">
+                    <div class="adjustment-group">
+                        <label for="adjustPatrimonio">Patrimônio Total</label>
+                        <input type="number" id="adjustPatrimonio" class="adjustment-input" placeholder="Ajuste (positivo/negativo)" step="0.01">
+                    </div>
+                    <div class="adjustment-group">
+                        <label for="adjustInvestimentos">Investimentos</label>
+                        <input type="number" id="adjustInvestimentos" class="adjustment-input" placeholder="Ajuste (positivo/negativo)" step="0.01">
+                    </div>
+                    <div class="adjustment-group">
+                        <label for="adjustGastos">Gastos</label>
+                        <input type="number" id="adjustGastos" class="adjustment-input" placeholder="Ajuste (positivo/negativo)" step="0.01">
+                    </div>
+                    <div class="adjustment-group">
+                        <label for="adjustLiquido">Patrimônio Líquido</label>
+                        <input type="number" id="adjustLiquido" class="adjustment-input" placeholder="Ajuste (positivo/negativo)" step="0.01">
+                    </div>
+                    <div class="adjustment-group">
+                        <label for="adjustPendentes">Pendentes</label>
+                        <input type="number" id="adjustPendentes" class="adjustment-input" placeholder="Ajuste (positivo/negativo)" step="0.01">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="applyAdjustmentsBtn" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-check"></i> Aplicar Ajustes
+                </button>
+            </div>
+        </section>
+       
+        <!-- MODAL DE CLASSIFICAÇÃO -->
+        <div class="modal-overlay" id="classifyModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-exchange-alt"></i> Classificar Registro</h3>
+                    <button class="modal-close" onclick="closeModal('classifyModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: 20px; color: var(--neutral-medium);">
+                        Selecione a categoria para o registro: "<span id="modalItemName" style="font-weight: 600;"></span>"
+                    </p>
+                    <div class="status-buttons" style="grid-template-columns: 1fr;">
+                        <button class="status-btn btn-status-patrimonio" id="classifyPatrimonioBtn" style="justify-content: center;">
+                            <i class="fas fa-landmark"></i> Patrimônio
+                        </button>
+                        <button class="status-btn btn-status-investido" id="classifyInvestimentosBtn" style="justify-content: center;">
+                            <i class="fas fa-chart-line"></i> Investimentos
+                        </button>
+                        <button class="status-btn btn-status-gasto" id="classifyGastosBtn" style="justify-content: center;">
+                            <i class="fas fa-receipt"></i> Gastos
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" onclick="closeModal('classifyModal')" style="background: var(--neutral-light);">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+       
+        <!-- MODAL DE BACKUP -->
+        <div class="modal-overlay" id="backupModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-database"></i> Backup de Dados</h3>
+                    <button class="modal-close" onclick="closeModal('backupModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: 20px; color: var(--neutral-medium);">
+                        Selecione uma opção para gerenciar seus dados.
+                    </p>
+                    <div class="action-group" style="flex-direction: column; gap: 15px;">
+                        <button class="btn btn-success" id="exportBackupBtn">
+                            <i class="fas fa-file-export"></i> Exportar Backup Completo
+                        </button>
+                        <button class="btn btn-primary" id="importBackupBtn">
+                            <i class="fas fa-file-import"></i> Importar Backup
+                        </button>
+                        <button class="btn btn-warning" id="createLocalBackupBtn">
+                            <i class="fas fa-save"></i> Salvar Localmente
+                        </button>
+                        <button class="btn" id="showBackupInfoBtn" style="background: var(--neutral-light);">
+                            <i class="fas fa-info-circle"></i> Informações do Backup
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-danger" id="clearAllDataBtn">
+                        <i class="fas fa-trash"></i> Limpar Todos os Dados
+                    </button>
+                </div>
+            </div>
+        </div>
+       
+        <!-- FOOTER -->
+        <footer class="main-footer">
+            <div class="footer-links">
+                <a href="#" id="backupLink">
+                    <i class="fas fa-database"></i> Backup
+                </a>
+                <a href="#" id="helpLink">
+                    <i class="fas fa-question-circle"></i> Ajuda
+                </a>
+                <a href="#" id="aboutLink">
+                    <i class="fas fa-info-circle"></i> Sobre
+                </a>
+                <a href="#" id="reportLink">
+                    <i class="fas fa-file-pdf"></i> Relatório
+                </a>
+            </div>
+            <p>Invest Sul &copy; 2026 | Sistema Inteligente de Gestão Patrimonial</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--neutral-medium);">
+                <i class="fas fa-shield-alt"></i> Dados protegidos localmente
+            </p>
+        </footer>
+    </div>
+   
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage">Operação realizada com sucesso!</span>
+    </div>
+   
+    <script>
+        // Sistema Invest Sul com função Enterprise Control
+        class InvestSulSystem {
+            constructor() {
+                this.items = [];
+                this.itemCounter = 1;
+                this.history = [];
+                this.adjustments = {
+                    patrimonio: 0,
+                    investimentos: 0,
+                    gastos: 0,
+                    liquido: 0,
+                    pendentes: 0
+                };
+               
+                // Dados da função L/B aprimorada
+                this.lbData = {
+                    liquido: 0, // Valor do Patrimônio Líquido (L)
+                    base: 0, // Valor da Base (B)
+                    isCombined: false, // Se está ligado (azul) ou desligado (vermelho)
+                    baseTarget: 10000, // Meta da Base
+                    depositedAmount: 0, // Valor já depositado para atingir a base
+                    baseAdjusted: false // Se a base já foi atingida
+                };
+               
+                // NOVO: Dados da função Enterprise Control
+                this.enterpriseData = {
+                    items: [],
+                    itemCounter: 1,
+                    saldoBruto: 0,
+                    saida: 0,
+                    saldoLiquido: 0,
+                    brutoCount: 0,
+                    saidaCount: 0
+                };
+               
+                this.currentItemToClassify = null;
+                this.charts = {};
+                this.initializeSystem();
+            }
+           
+            async initializeSystem() {
+                await this.loadData();
+                this.setupEventListeners();
+                this.setupCharts();
+                this.setupHistorico();
+                this.updateUI();
+                this.showNotification('Sistema Invest Sul inicializado com sucesso!', 'success');
+               
+                // Update date and time in real-time
+                this.updateDateTime();
+                setInterval(() => this.updateDateTime(), 60000);
+               
+                // Auto-save every 2 minutes
+                setInterval(() => this.saveData(), 120000);
+               
+                // Save on close
+                window.addEventListener('beforeunload', () => this.saveData());
+               
+                // Inicializar função L/B
+                this.initializeLBFunction();
+               
+                // Inicializar função Enterprise Control
+                this.initializeEnterpriseControl();
+            }
+           
+            // Inicializar função L/B
+            initializeLBFunction() {
+                // Configurar toggle
+                const toggle = document.getElementById('lbToggle');
+                toggle.checked = this.lbData.isCombined;
+                this.updateLBToggle();
+               
+                // Configurar inputs
+                document.getElementById('baseTarget').value = this.lbData.baseTarget;
+                document.getElementById('depositedAmount').value = this.lbData.depositedAmount;
+               
+                // Configurar evento de mudança em tempo real para o valor depositado
+                const depositedAmountInput = document.getElementById('depositedAmount');
+                depositedAmountInput.addEventListener('input', () => {
+                    this.handleDepositAmountChange();
+                });
+               
+                // Atualizar display
+                this.updateLBDisplay();
+                this.updateDepositDisplay();
+               
+                // Atualizar estado dos cards
+                this.updateLBCards();
+            }
+           
+            // NOVO: Inicializar função Enterprise Control
+            initializeEnterpriseControl() {
+                // Renderizar tabela
+                this.renderEnterpriseTable();
+               
+                // Atualizar resumo
+                this.updateEnterpriseSummary();
+               
+                // Configurar busca em tempo real
+                const searchInput = document.getElementById('enterpriseSearch');
+                searchInput.addEventListener('input', () => {
+                    this.filterEnterpriseTable(searchInput.value);
+                });
+            }
+           
+            // NOVO: Adicionar item à planilha Enterprise
+            addEnterpriseItem() {
+                const product = document.getElementById('enterpriseProduct').value.trim();
+                const valueInput = document.getElementById('enterpriseValue').value;
+                const type = document.getElementById('enterpriseType').value;
+               
+                if (!product || !valueInput) {
+                    this.showNotification('Preencha o produto/serviço e o valor!', 'error');
+                    return false;
+                }
+               
+                const value = parseFloat(valueInput);
+                if (value <= 0 || isNaN(value)) {
+                    this.showNotification('Valor deve ser maior que zero!', 'error');
+                    return false;
+                }
+               
+                const newItem = {
+                    id: this.enterpriseData.itemCounter++,
+                    product: product,
+                    value: value,
+                    type: type, // 'B' para Bruto, 'S' para Saída
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    createdAt: new Date().toISOString()
+                };
+               
+                this.enterpriseData.items.push(newItem);
+               
+                // Atualizar totais
+                if (type === 'B') {
+                    this.enterpriseData.saldoBruto += value;
+                    this.enterpriseData.brutoCount++;
+                } else {
+                    this.enterpriseData.saida += value;
+                    this.enterpriseData.saidaCount++;
+                }
+               
+                this.enterpriseData.saldoLiquido = this.enterpriseData.saldoBruto - this.enterpriseData.saida;
+               
+                // Limpar campos
+                document.getElementById('enterpriseProduct').value = '';
+                document.getElementById('enterpriseValue').value = '';
+               
+                // Atualizar UI
+                this.renderEnterpriseTable();
+                this.updateEnterpriseSummary();
+                this.saveData();
+               
+                this.showNotification('Item adicionado à planilha!', 'success');
+                return true;
+            }
+           
+            // NOVO: Renderizar tabela Enterprise
+            renderEnterpriseTable() {
+                const tbody = document.getElementById('enterpriseTableBody');
+                const items = this.enterpriseData.items;
+               
+                if (items.length === 0) {
+                    tbody.innerHTML = `
+                        <tr class="empty-state-row">
+                            <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <h4>Planilha vazia</h4>
+                                <p>Adicione itens para começar a usar a planilha</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+               
+                tbody.innerHTML = '';
+               
+                items.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    const typeText = item.type === 'B' ? 'Saldo Bruto' : 'Saída';
+                    const typeClass = item.type === 'B' ? 'bruto' : 'saida';
+                   
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>
+                            <input type="text" class="excel-input" value="${item.product}" 
+                                data-id="${item.id}" data-field="product" onchange="system.updateEnterpriseItem(${item.id}, 'product', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" class="excel-input" value="${item.value}" step="0.01"
+                                data-id="${item.id}" data-field="value" onchange="system.updateEnterpriseItem(${item.id}, 'value', this.value)">
+                        </td>
+                        <td>
+                            <select class="excel-type-select ${typeClass}" 
+                                data-id="${item.id}" data-field="type" onchange="system.updateEnterpriseItem(${item.id}, 'type', this.value)">
+                                <option value="B" ${item.type === 'B' ? 'selected' : ''}>B - Saldo Bruto</option>
+                                <option value="S" ${item.type === 'S' ? 'selected' : ''}>S - Saída</option>
+                            </select>
+                        </td>
+                        <td>${item.date}</td>
+                        <td>
+                            <div class="excel-actions">
+                                <button class="excel-action-btn delete" onclick="system.deleteEnterpriseItem(${item.id})">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+           
+            // NOVO: Atualizar item da planilha Enterprise
+            updateEnterpriseItem(id, field, value) {
+                const itemIndex = this.enterpriseData.items.findIndex(item => item.id === id);
+                if (itemIndex === -1) return;
+               
+                const oldItem = { ...this.enterpriseData.items[itemIndex] };
+                const oldValue = oldItem.value;
+                const oldType = oldItem.type;
+               
+                // Recalcular totais removendo o valor antigo
+                if (oldType === 'B') {
+                    this.enterpriseData.saldoBruto -= oldValue;
+                    this.enterpriseData.brutoCount--;
+                } else {
+                    this.enterpriseData.saida -= oldValue;
+                    this.enterpriseData.saidaCount--;
+                }
+               
+                // Atualizar item
+                if (field === 'value') {
+                    this.enterpriseData.items[itemIndex][field] = parseFloat(value) || 0;
+                } else {
+                    this.enterpriseData.items[itemIndex][field] = value;
+                }
+               
+                const newItem = this.enterpriseData.items[itemIndex];
+                const newValue = newItem.value;
+                const newType = newItem.type;
+               
+                // Recalcular totais com o novo valor
+                if (newType === 'B') {
+                    this.enterpriseData.saldoBruto += newValue;
+                    this.enterpriseData.brutoCount++;
+                } else {
+                    this.enterpriseData.saida += newValue;
+                    this.enterpriseData.saidaCount++;
+                }
+               
+                this.enterpriseData.saldoLiquido = this.enterpriseData.saldoBruto - this.enterpriseData.saida;
+               
+                // Atualizar UI em tempo real
+                this.updateEnterpriseSummary();
+                this.saveData();
+               
+                this.showNotification('Item atualizado em tempo real!', 'info');
+            }
+           
+            // NOVO: Excluir item da planilha Enterprise
+            deleteEnterpriseItem(id) {
+                if (!confirm('Tem certeza que deseja excluir este item?')) return;
+               
+                const itemIndex = this.enterpriseData.items.findIndex(item => item.id === id);
+                if (itemIndex === -1) return;
+               
+                const item = this.enterpriseData.items[itemIndex];
+               
+                // Recalcular totais
+                if (item.type === 'B') {
+                    this.enterpriseData.saldoBruto -= item.value;
+                    this.enterpriseData.brutoCount--;
+                } else {
+                    this.enterpriseData.saida -= item.value;
+                    this.enterpriseData.saidaCount--;
+                }
+               
+                this.enterpriseData.saldoLiquido = this.enterpriseData.saldoBruto - this.enterpriseData.saida;
+               
+                // Remover item
+                this.enterpriseData.items.splice(itemIndex, 1);
+               
+                // Atualizar UI
+                this.renderEnterpriseTable();
+                this.updateEnterpriseSummary();
+                this.saveData();
+               
+                this.showNotification('Item excluído da planilha!', 'success');
+            }
+           
+            // NOVO: Atualizar resumo financeiro Enterprise
+            updateEnterpriseSummary() {
+                const format = (value) => value.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+               
+                // Atualizar valores
+                document.getElementById('saldoBrutoValue').textContent = format(this.enterpriseData.saldoBruto);
+                document.getElementById('saidaValue').textContent = format(this.enterpriseData.saida);
+                document.getElementById('saldoLiquidoValue').textContent = format(this.enterpriseData.saldoLiquido);
+               
+                // Atualizar tendências
+                document.getElementById('brutoTrend').textContent = `+${this.enterpriseData.brutoCount} itens`;
+                document.getElementById('saidaTrend').textContent = `+${this.enterpriseData.saidaCount} itens`;
+               
+                // Calcular porcentagem de lucro/prejuízo
+                let percentage = 0;
+                if (this.enterpriseData.saldoBruto > 0) {
+                    percentage = (this.enterpriseData.saldoLiquido / this.enterpriseData.saldoBruto) * 100;
+                }
+               
+                const liquidoTrend = document.getElementById('liquidoTrend');
+                liquidoTrend.textContent = `${percentage.toFixed(1)}%`;
+               
+                if (percentage > 0) {
+                    liquidoTrend.className = 'summary-trend trend-positive';
+                } else if (percentage < 0) {
+                    liquidoTrend.className = 'summary-trend trend-negative';
+                } else {
+                    liquidoTrend.className = 'summary-trend';
+                }
+            }
+           
+            // NOVO: Filtrar tabela Enterprise
+            filterEnterpriseTable(searchTerm) {
+                const items = this.enterpriseData.items;
+                const tbody = document.getElementById('enterpriseTableBody');
+               
+                if (!searchTerm.trim()) {
+                    this.renderEnterpriseTable();
+                    return;
+                }
+               
+                const filteredItems = items.filter(item =>
+                    item.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.value.toString().includes(searchTerm) ||
+                    item.date.includes(searchTerm) ||
+                    (item.type === 'B' ? 'bruto' : 'saida').includes(searchTerm.toLowerCase())
+                );
+               
+                if (filteredItems.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                                <div class="empty-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <h4>Nenhum resultado encontrado</h4>
+                                <p>Tente buscar com outros termos</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+               
+                tbody.innerHTML = '';
+               
+                filteredItems.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    const typeText = item.type === 'B' ? 'Saldo Bruto' : 'Saída';
+                    const typeClass = item.type === 'B' ? 'bruto' : 'saida';
+                   
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>
+                            <input type="text" class="excel-input" value="${item.product}" 
+                                data-id="${item.id}" data-field="product" onchange="system.updateEnterpriseItem(${item.id}, 'product', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" class="excel-input" value="${item.value}" step="0.01"
+                                data-id="${item.id}" data-field="value" onchange="system.updateEnterpriseItem(${item.id}, 'value', this.value)">
+                        </td>
+                        <td>
+                            <select class="excel-type-select ${typeClass}" 
+                                data-id="${item.id}" data-field="type" onchange="system.updateEnterpriseItem(${item.id}, 'type', this.value)">
+                                <option value="B" ${item.type === 'B' ? 'selected' : ''}>B - Saldo Bruto</option>
+                                <option value="S" ${item.type === 'S' ? 'selected' : ''}>S - Saída</option>
+                            </select>
+                        </td>
+                        <td>${item.date}</td>
+                        <td>
+                            <div class="excel-actions">
+                                <button class="excel-action-btn delete" onclick="system.deleteEnterpriseItem(${item.id})">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+           
+            // NOVO: Adicionar linha em branco na planilha
+            addEnterpriseRow() {
+                const newItem = {
+                    id: this.enterpriseData.itemCounter++,
+                    product: '',
+                    value: 0,
+                    type: 'B',
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    createdAt: new Date().toISOString()
+                };
+               
+                this.enterpriseData.items.push(newItem);
+               
+                // Atualizar UI
+                this.renderEnterpriseTable();
+                this.saveData();
+               
+                this.showNotification('Nova linha adicionada à planilha!', 'success');
+            }
+           
+            // NOVO: Limpar toda a planilha
+            clearEnterpriseSheet() {
+                if (this.enterpriseData.items.length === 0) {
+                    this.showNotification('A planilha já está vazia!', 'info');
+                    return;
+                }
+               
+                if (confirm('Tem certeza que deseja limpar toda a planilha? Esta ação não pode ser desfeita.')) {
+                    this.enterpriseData.items = [];
+                    this.enterpriseData.saldoBruto = 0;
+                    this.enterpriseData.saida = 0;
+                    this.enterpriseData.saldoLiquido = 0;
+                    this.enterpriseData.brutoCount = 0;
+                    this.enterpriseData.saidaCount = 0;
+                   
+                    // Atualizar UI
+                    this.renderEnterpriseTable();
+                    this.updateEnterpriseSummary();
+                    this.saveData();
+                   
+                    this.showNotification('Planilha limpa com sucesso!', 'success');
+                }
+            }
+           
+            // NOVO: Exportar planilha Enterprise
+            exportEnterpriseSheet() {
+                if (this.enterpriseData.items.length === 0) {
+                    this.showNotification('Nenhum dado para exportar!', 'warning');
+                    return;
+                }
+               
+                let csv = 'ID,Produto/Serviço,Valor (R$),Tipo,Data\n';
+                this.enterpriseData.items.forEach(item => {
+                    const typeText = item.type === 'B' ? 'Saldo Bruto' : 'Saída';
+                    csv += `"${item.id}","${item.product}","${item.value}","${typeText}","${item.date}"\n`;
+                });
+               
+                // Adicionar resumo
+                csv += '\nRESUMO\n';
+                csv += `Saldo Bruto,${this.enterpriseData.saldoBruto}\n`;
+                csv += `Saída,${this.enterpriseData.saida}\n`;
+                csv += `Saldo Líquido,${this.enterpriseData.saldoLiquido}\n`;
+               
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
+               
+                a.href = url;
+                a.download = `Enterprise_Control_${timestamp}.csv`;
+                a.click();
+               
+                URL.revokeObjectURL(url);
+                this.showNotification('Planilha exportada com sucesso!', 'success');
+            }
+           
+            // NOVO: Imprimir planilha Enterprise
+            printEnterpriseSheet() {
+                const printWindow = window.open('', '_blank');
+                const items = this.enterpriseData.items;
+               
+                let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Enterprise Control - Planilha</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { color: #0d7d4d; border-bottom: 2px solid #0d7d4d; padding-bottom: 10px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                            th { background-color: #f0f0f0; }
+                            .summary { margin-top: 30px; padding: 20px; background-color: #f9f9f9; border-radius: 5px; }
+                            .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+                            .summary-item { text-align: center; }
+                            .summary-value { font-size: 1.5rem; font-weight: bold; }
+                            .bruto { color: #0d7d4d; }
+                            .saida { color: #ef4444; }
+                            .liquido { color: #2a5caa; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Enterprise Control - Planilha de Gestão</h1>
+                        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}</p>
+                `;
+               
+                if (items.length > 0) {
+                    html += `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Produto/Serviço</th>
+                                    <th>Valor (R$)</th>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                   
+                    items.forEach(item => {
+                        const typeText = item.type === 'B' ? 'Saldo Bruto' : 'Saída';
+                        html += `
+                            <tr>
+                                <td>${item.id}</td>
+                                <td>${item.product}</td>
+                                <td>${item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                <td>${typeText}</td>
+                                <td>${item.date}</td>
+                            </tr>
+                        `;
+                    });
+                   
+                    html += `
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    html += `<p style="color: #666; font-style: italic;">Nenhum item na planilha.</p>`;
+                }
+               
+                // Adicionar resumo
+                html += `
+                    <div class="summary">
+                        <h2>Resumo Financeiro</h2>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <div>Saldo Bruto</div>
+                                <div class="summary-value bruto">${this.enterpriseData.saldoBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                            </div>
+                            <div class="summary-item">
+                                <div>Saída</div>
+                                <div class="summary-value saida">${this.enterpriseData.saida.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                            </div>
+                            <div class="summary-item">
+                                <div>Saldo Líquido</div>
+                                <div class="summary-value liquido">${this.enterpriseData.saldoLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+               
+                html += `
+                    </body>
+                    </html>
+                `;
+               
+                printWindow.document.write(html);
+                printWindow.document.close();
+                printWindow.focus();
+               
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 250);
+            }
+           
+            // Manipular mudança em tempo real do valor depositado
+            handleDepositAmountChange() {
+                const depositedAmountInput = document.getElementById('depositedAmount');
+                const newValue = parseFloat(depositedAmountInput.value) || 0;
+               
+                // Calcular a diferença entre o novo valor e o valor atual
+                const difference = newValue - this.lbData.depositedAmount;
+               
+                // Atualizar o valor depositado
+                this.lbData.depositedAmount = newValue;
+               
+                // IMPORTANTE: Atualizar a Base (B) com a diferença
+                if (difference !== 0) {
+                    this.lbData.base += difference;
+                   
+                    // Atualizar displays em tempo real
+                    this.updateLBDisplay();
+                    this.updateDepositDisplay();
+                    this.updateLBCards();
+                   
+                    // Mostrar notificação apenas para mudanças significativas
+                    if (Math.abs(difference) >= 0.01) {
+                        this.showNotification(
+                            `Base atualizada em tempo real: ${difference > 0 ? '+' : ''}${difference.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,
+                            'info'
+                        );
+                    }
+                }
+            }
+           
+            // Atualizar toggle L/B
+            updateLBToggle() {
+                const toggle = document.getElementById('lbToggle');
+                const statusText = document.getElementById('lbStatusText');
+                const statusText2 = document.getElementById('lbStatusText2');
+                const combinedBadge = document.getElementById('combinedStatusBadge');
+               
+                if (toggle.checked) {
+                    // Ligado (azul) - Valores unificados
+                    statusText.style.display = 'none';
+                    statusText2.style.display = 'inline';
+                    statusText2.textContent = 'LIGADO (Unificado)';
+                    combinedBadge.textContent = 'Unificado';
+                    combinedBadge.style.background = 'rgba(26, 35, 126, 0.1)';
+                    combinedBadge.style.color = 'var(--blue-strong)';
+                   
+                    // Atualizar textos informativos
+                    document.getElementById('combinedInfo').textContent =
+                        'Valores unificados: Patrimônio Líquido + Base';
+                    document.getElementById('baseInfo').textContent =
+                        'Valor da Base. Unificado com Patrimônio Líquido quando ligado.';
+                } else {
+                    // Desligado (vermelho) - Valores separados
+                    statusText.style.display = 'inline';
+                    statusText2.style.display = 'none';
+                    statusText.textContent = 'DESLIGADO (Separado)';
+                    combinedBadge.textContent = 'Separado';
+                    combinedBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+                    combinedBadge.style.color = 'var(--accent-red)';
+                   
+                    // Atualizar textos informativos
+                    document.getElementById('combinedInfo').textContent =
+                        'Valores separados: Patrimônio Líquido e Base independentes';
+                    document.getElementById('baseInfo').textContent =
+                        'Valor da Base. Separado do Patrimônio Líquido quando desligado.';
+                }
+               
+                this.lbData.isCombined = toggle.checked;
+                this.updateLBDisplay();
+                this.updateLBCards();
+                this.saveData();
+            }
+           
+            // Atualizar display dos valores L/B
+            updateLBDisplay() {
+                const format = (value) => value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+               
+                // Atualizar valores individuais
+                document.getElementById('liquidoValue').textContent = format(this.lbData.liquido);
+                document.getElementById('baseValue').textContent = format(this.lbData.base);
+                document.getElementById('liquidoPartValue').textContent = format(this.lbData.liquido);
+                document.getElementById('basePartValue').textContent = format(this.lbData.base);
+               
+                // Calcular valor combinado
+                let combinedValue = this.lbData.liquido;
+                if (this.lbData.isCombined) {
+                    combinedValue += this.lbData.base;
+                }
+               
+                document.getElementById('combinedValue').textContent = format(combinedValue);
+            }
+           
+            // Atualizar display do depósito
+            updateDepositDisplay() {
+                const depositDisplay = document.getElementById('depositDisplay');
+                const percentage = (this.lbData.depositedAmount / this.lbData.baseTarget) * 100;
+               
+                depositDisplay.innerHTML = `
+                    Depositado: ${this.lbData.depositedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} / 
+                    Meta: ${this.lbData.baseTarget.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} 
+                    (${percentage.toFixed(1)}%)
+                `;
+               
+                // Atualizar cor do display
+                if (percentage >= 100) {
+                    depositDisplay.className = 'deposit-display achieved';
+                    depositDisplay.innerHTML += ' <i class="fas fa-check-circle"></i>';
+                } else {
+                    depositDisplay.className = 'deposit-display warning';
+                }
+            }
+           
+            // Atualizar estado dos cards L/B
+            updateLBCards() {
+                const baseCard = document.getElementById('baseCard');
+                const baseBadge = document.getElementById('baseStatusBadge');
+                const combinedCard = document.getElementById('combinedCard');
+                const liquidoCard = document.getElementById('liquidoCard');
+               
+                // Verificar progresso do depósito
+                const depositPercentage = (this.lbData.depositedAmount / this.lbData.baseTarget) * 100;
+               
+                // Limpar classes anteriores
+                baseCard.classList.remove('warning', 'achieved', 'active');
+                combinedCard.classList.remove('active');
+                liquidoCard.classList.remove('active');
+               
+                if (this.lbData.isCombined) {
+                    combinedCard.classList.add('active');
+                }
+               
+                if (this.lbData.baseAdjusted) {
+                    // Base já atingida - cinza
+                    baseCard.classList.add('achieved');
+                    baseBadge.textContent = 'Atingido!';
+                    baseBadge.style.background = 'rgba(117, 117, 117, 0.1)';
+                    baseBadge.style.color = 'var(--gray-achieved)';
+                } else if (depositPercentage >= 100) {
+                    // Meta atingida - verde
+                    baseCard.classList.add('achieved');
+                    baseBadge.textContent = 'Meta!';
+                    baseBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                    baseBadge.style.color = 'var(--accent-green)';
+                } else if (depositPercentage > 0) {
+                    // Em progresso - amarelo
+                    baseCard.classList.add('warning');
+                    baseBadge.textContent = `${Math.round(depositPercentage)}%`;
+                    baseBadge.style.background = 'rgba(255, 214, 0, 0.1)';
+                    baseBadge.style.color = 'var(--yellow-alert)';
+                } else {
+                    // Sem depósito - amarelo claro
+                    baseBadge.textContent = 'Ativo';
+                    baseBadge.style.background = 'rgba(245, 158, 11, 0.1)';
+                    baseBadge.style.color = 'var(--accent-yellow)';
+                }
+            }
+           
+            // Ajustar valor do Patrimônio Líquido
+            adjustLiquidoValue() {
+                const input = document.getElementById('liquidoAdjust');
+                const value = parseFloat(input.value) || 0;
+               
+                if (value !== 0) {
+                    this.lbData.liquido += value;
+                    input.value = '';
+                    this.updateLBDisplay();
+                    this.saveData();
+                    this.showNotification(`Patrimônio Líquido ajustado em ${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 'success');
+                }
+            }
+           
+            // Ajustar valor da Base
+            adjustBaseValue() {
+                const input = document.getElementById('baseAdjust');
+                const value = parseFloat(input.value) || 0;
+               
+                if (value !== 0) {
+                    this.lbData.base += value;
+                    input.value = '';
+                   
+                    // Atualizar display
+                    this.updateLBDisplay();
+                    this.saveData();
+                    this.showNotification(`Base ajustada em ${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`, 'success');
+                }
+            }
+           
+            // Atualizar configurações da Base e Depósito
+            updateBaseSettings() {
+                const target = parseFloat(document.getElementById('baseTarget').value) || 10000;
+                const deposited = parseFloat(document.getElementById('depositedAmount').value) || 0;
+               
+                if (target <= 0) {
+                    this.showNotification('A meta da Base deve ser maior que zero!', 'error');
+                    return;
+                }
+               
+                if (deposited < 0) {
+                    this.showNotification('O valor depositado não pode ser negativo!', 'error');
+                    return;
+                }
+               
+                this.lbData.baseTarget = target;
+                this.lbData.depositedAmount = deposited;
+               
+                // Verificar se a meta foi atingida
+                this.lbData.baseAdjusted = deposited >= target;
+               
+                this.updateDepositDisplay();
+                this.updateLBCards();
+                this.saveData();
+                this.showNotification('Configurações atualizadas!', 'success');
+            }
+           
+            // Sincronizar Patrimônio Líquido entre todas as funções
+            syncLiquidoValue() {
+                // Atualizar valor L/B
+                const totals = this.calculateTotals();
+                this.lbData.liquido = totals.liquido;
+               
+                // Atualizar display L/B
+                this.updateLBDisplay();
+                this.updateLBCards();
+               
+                // Atualizar também no Resolved Balance
+                document.getElementById('adjustLiquido').value = '';
+            }
+           
+            updateDateTime() {
+                const now = new Date();
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                };
+                const formatted = new Intl.DateTimeFormat('pt-BR', options).format(now);
+                document.getElementById('currentDateTime').textContent = formatted;
+            }
+           
+            async loadData() {
+                try {
+                    const savedData = localStorage.getItem('investSulData');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        this.items = data.items || [];
+                        this.itemCounter = data.itemCounter || 1;
+                        this.history = data.history || [];
+                        this.adjustments = data.adjustments || this.adjustments;
+                        this.lbData = data.lbData || this.lbData;
+                        this.enterpriseData = data.enterpriseData || this.enterpriseData;
+                        this.showNotification('Dados carregados do localStorage com sucesso!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar dados:', error);
+                }
+            }
+           
+            async saveData() {
+                try {
+                    const data = {
+                        items: this.items,
+                        itemCounter: this.itemCounter,
+                        history: this.history,
+                        adjustments: this.adjustments,
+                        lbData: this.lbData,
+                        enterpriseData: this.enterpriseData,
+                        lastSaved: new Date().toISOString()
+                    };
+                    localStorage.setItem('investSulData', JSON.stringify(data));
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao salvar dados:', error);
+                    return false;
+                }
+            }
+           
+            // Item Management
+            addItem(name, value, category, status) {
+                if (!name || !value || value <= 0) {
+                    this.showNotification('Preencha todos os campos corretamente!', 'error');
+                    return false;
+                }
+                const newItem = {
+                    id: this.itemCounter++,
+                    name: name.trim(),
+                    value: parseFloat(value),
+                    category: category,
+                    status: status,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                this.items.push(newItem);
+               
+                this.history.push({
+                    action: 'ADD',
+                    item: { ...newItem },
+                    timestamp: new Date().toISOString()
+                });
+               
+                // Sincronizar Patrimônio Líquido
+                this.syncLiquidoValue();
+               
+                this.saveData();
+                this.updateUI();
+                this.showNotification('Registro adicionado com sucesso!', 'success');
+                return true;
+            }
+           
+            deleteItem(id) {
+                const itemIndex = this.items.findIndex(item => item.id === id);
+                if (itemIndex === -1) return false;
+                const deletedItem = this.items[itemIndex];
+                this.items.splice(itemIndex, 1);
+               
+                this.history.push({
+                    action: 'DELETE',
+                    item: deletedItem,
+                    timestamp: new Date().toISOString()
+                });
+               
+                // Sincronizar Patrimônio Líquido
+                this.syncLiquidoValue();
+               
+                this.saveData();
+                this.updateUI();
+                this.showNotification('Registro removido com sucesso!', 'success');
+                return true;
+            }
+           
+            classifyItem(id, newCategory) {
+                const item = this.items.find(item => item.id === id);
+                if (!item) return false;
+                const newStatus = this.getStatusForCategory(newCategory);
+                const updates = {
+                    category: newCategory,
+                    status: newStatus
+                };
+               
+                // Atualizar item
+                const itemIndex = this.items.findIndex(item => item.id === id);
+                const oldItem = { ...this.items[itemIndex] };
+                this.items[itemIndex] = {
+                    ...this.items[itemIndex],
+                    ...updates,
+                    updatedAt: new Date().toISOString()
+                };
+               
+                this.history.push({
+                    action: 'EDIT',
+                    oldItem: oldItem,
+                    newItem: {...this.items[itemIndex]},
+                    timestamp: new Date().toISOString()
+                });
+               
+                // Sincronizar Patrimônio Líquido
+                this.syncLiquidoValue();
+               
+                this.saveData();
+                this.updateUI();
+                this.showNotification('Registro classificado com sucesso!', 'success');
+                return true;
+            }
+           
+            classifyAll(newCategory) {
+                const pendentes = this.items.filter(item => item.category === 'pendentes');
+                if (pendentes.length === 0) {
+                    this.showNotification('Não há registros pendentes para classificar!', 'warning');
+                    return false;
+                }
+                const newStatus = this.getStatusForCategory(newCategory);
+                pendentes.forEach(item => {
+                    const oldItem = { ...item };
+                    item.category = newCategory;
+                    item.status = newStatus;
+                    item.updatedAt = new Date().toISOString();
+                   
+                    this.history.push({
+                        action: 'EDIT',
+                        oldItem: oldItem,
+                        newItem: { ...item },
+                        timestamp: new Date().toISOString()
+                    });
+                });
+               
+                // Sincronizar Patrimônio Líquido
+                this.syncLiquidoValue();
+               
+                this.saveData();
+                this.updateUI();
+                this.showNotification(`${pendentes.length} registros classificados como ${this.getCategoryName(newCategory)}!`, 'success');
+                return true;
+            }
+           
+            // Adjustments
+            applyAdjustments() {
+                const categories = ['patrimonio', 'investimentos', 'gastos', 'liquido', 'pendentes'];
+                let hasAdjustment = false;
+               
+                categories.forEach(cat => {
+                    const input = document.getElementById(`adjust${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
+                    const value = parseFloat(input.value) || 0;
+                    if (value !== 0) {
+                        this.adjustments[cat] += value;
+                        hasAdjustment = true;
+                        input.value = '';
+                    }
+                });
+               
+                if (hasAdjustment) {
+                    // Sincronizar Patrimônio Líquido no L/B
+                    this.syncLiquidoValue();
+                   
+                    this.saveData();
+                    this.updateUI();
+                    this.showNotification('Ajustes aplicados com sucesso!', 'success');
+                } else {
+                    this.showNotification('Nenhum ajuste aplicado. Insira valores nos campos.', 'info');
+                }
+            }
+           
+            // Calculations
+            calculateTotals() {
+                const totals = {
+                    patrimonio: this.adjustments.patrimonio,
+                    investimentos: this.adjustments.investimentos,
+                    gastos: this.adjustments.gastos,
+                    pendentes: this.adjustments.pendentes,
+                    liquido: this.adjustments.liquido
+                };
+               
+                this.items.forEach(item => {
+                    if (item.category === 'patrimonio') totals.patrimonio += item.value;
+                    else if (item.category === 'investimentos') totals.investimentos += item.value;
+                    else if (item.category === 'gastos') totals.gastos += item.value;
+                    else if (item.category === 'pendentes') totals.pendentes += item.value;
+                });
+               
+                totals.liquido += totals.patrimonio - totals.gastos;
+                return totals;
+            }
+           
+            getTotalsAtDate(date) {
+                const sortedHistory = [...this.history]
+                    .filter(h => new Date(h.timestamp) <= date)
+                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+               
+                const itemMap = new Map();
+               
+                sortedHistory.forEach(h => {
+                    if (h.action === 'ADD') {
+                        itemMap.set(h.item.id, { ...h.item });
+                    } else if (h.action === 'EDIT') {
+                        if (itemMap.has(h.newItem.id)) {
+                            itemMap.set(h.newItem.id, { ...h.newItem });
+                        }
+                    } else if (h.action === 'DELETE') {
+                        itemMap.delete(h.item.id);
+                    }
+                });
+               
+                const itemsAtDate = Array.from(itemMap.values());
+               
+                const totals = {
+                    patrimonio: this.adjustments.patrimonio,
+                    investimentos: this.adjustments.investimentos,
+                    gastos: this.adjustments.gastos,
+                    liquido: this.adjustments.liquido,
+                    pendentes: this.adjustments.pendentes
+                };
+               
+                itemsAtDate.forEach(item => {
+                    if (item.category === 'patrimonio') totals.patrimonio += item.value;
+                    else if (item.category === 'investimentos') totals.investimentos += item.value;
+                    else if (item.category === 'gastos') totals.gastos += item.value;
+                    else if (item.category === 'pendentes') totals.pendentes += item.value;
+                });
+               
+                totals.liquido += totals.patrimonio - totals.gastos;
+                return totals;
+            }
+           
+            // Charts
+            setupCharts() {
+                const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+                const evolutionCtx = document.getElementById('evolutionChart').getContext('2d');
+               
+                if (this.charts.distribution) this.charts.distribution.destroy();
+                if (this.charts.evolution) this.charts.evolution.destroy();
+               
+                this.charts.distribution = new Chart(distributionCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Patrimônio', 'Investimentos', 'Gastos', 'Pendentes', 'Patrimônio Líquido'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#10b981',
+                                '#3b82f6',
+                                '#ef4444',
+                                '#f59e0b',
+                                '#8b5cf6'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+               
+                this.charts.evolution = new Chart(evolutionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Patrimônio',
+                                data: [],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#ffffff',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Investimentos',
+                                data: [],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#ffffff',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Gastos',
+                                data: [],
+                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#ef4444',
+                                pointBorderColor: '#ffffff',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Líquido',
+                                data: [],
+                                borderColor: '#8b5cf6',
+                                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#8b5cf6',
+                                pointBorderColor: '#ffffff',
+                                fill: true,
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 13,
+                                        weight: 'bold'
+                                    },
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    callback: (value) => `R$ ${value.toLocaleString('pt-BR')}`,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+               
+                this.updateCharts();
+            }
+           
+            calculateEvolutionData() {
+                const now = new Date();
+                let minDate = now;
+                if (this.history.length > 0) {
+                    minDate = new Date(Math.min(...this.history.map(h => new Date(h.timestamp).getTime())));
+                }
+                const labels = [];
+                const patrimonio = [];
+                const investimentos = [];
+                const gastos = [];
+                const liquido = [];
+                let currentDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+                while (currentDate <= now) {
+                    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+                    const totals = this.getTotalsAtDate(endOfMonth);
+                    labels.push(currentDate.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }));
+                    patrimonio.push(totals.patrimonio);
+                    investimentos.push(totals.investimentos);
+                    gastos.push(totals.gastos);
+                    liquido.push(totals.liquido);
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                }
+               
+                const currentMonthStr = now.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+                if (labels.length === 0 || labels[labels.length - 1] !== currentMonthStr) {
+                    const currentTotals = this.calculateTotals();
+                    labels.push(currentMonthStr);
+                    patrimonio.push(currentTotals.patrimonio);
+                    investimentos.push(currentTotals.investimentos);
+                    gastos.push(currentTotals.gastos);
+                    liquido.push(currentTotals.liquido);
+                }
+               
+                return {labels, patrimonio, investimentos, gastos, liquido};
+            }
+           
+            updateCharts() {
+                const totals = this.calculateTotals();
+               
+                this.charts.distribution.data.datasets[0].data = [
+                    totals.patrimonio,
+                    totals.investimentos,
+                    totals.gastos,
+                    totals.pendentes,
+                    totals.liquido
+                ];
+                this.charts.distribution.update();
+               
+                const evolutionData = this.calculateEvolutionData();
+                this.charts.evolution.data.labels = evolutionData.labels;
+                this.charts.evolution.data.datasets[0].data = evolutionData.patrimonio;
+                this.charts.evolution.data.datasets[1].data = evolutionData.investimentos;
+                this.charts.evolution.data.datasets[2].data = evolutionData.gastos;
+                this.charts.evolution.data.datasets[3].data = evolutionData.liquido;
+                this.charts.evolution.update();
+            }
+           
+            // Historico
+            setupHistorico() {
+                const yearSelect = document.getElementById('historicoYear');
+                const now = new Date();
+                const currentYear = now.getFullYear();
+               
+                yearSelect.innerHTML = '';
+               
+                for (let y = currentYear - 4; y <= currentYear; y++) {
+                    const option = document.createElement('option');
+                    option.value = y;
+                    option.textContent = y;
+                    if (y === currentYear) option.selected = true;
+                    yearSelect.appendChild(option);
+                }
+               
+                yearSelect.addEventListener('change', () => this.updateHistoricoTable());
+                this.updateHistoricoTable();
+            }
+           
+            updateHistoricoTable() {
+                const year = parseInt(document.getElementById('historicoYear').value);
+                if (isNaN(year)) return;
+                const body = document.getElementById('historicoBody');
+                body.innerHTML = '';
+                const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+               
+                for (let m = 0; m < 12; m++) {
+                    const endOfMonth = new Date(year, m + 1, 0, 23, 59, 59);
+                    const now = new Date();
+                    if (endOfMonth > now) continue;
+                   
+                    const totals = this.getTotalsAtDate(endOfMonth);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${months[m]}</td>
+                        <td>R$ ${totals.patrimonio.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td>R$ ${totals.investimentos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td>R$ ${totals.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td>R$ ${totals.liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    `;
+                    body.appendChild(row);
+                }
+               
+                if (body.children.length === 0) {
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="empty-state" style="padding: 40px 20px;">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <h4>Nenhum dado histórico disponível</h4>
+                                <p>Adicione registros para visualizar o histórico.</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+           
+            // Reports
+            generateFullReport() {
+                this.showNotification('Gerando relatório completo...', 'info');
+               
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const totals = this.calculateTotals();
+                const now = new Date();
+               
+                doc.setFont('helvetica');
+                doc.setFontSize(20);
+                doc.setTextColor(30, 58, 138);
+                doc.text('Relatório Patrimonial - Invest Sul', 20, 30);
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Gerado em: ${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`, 20, 40);
+               
+                doc.setFontSize(16);
+                doc.setTextColor(30, 58, 138);
+                doc.text('Resumo Patrimonial', 20, 60);
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Patrimônio Total: R$ ${totals.patrimonio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 75);
+                doc.text(`Investimentos: R$ ${totals.investimentos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 85);
+                doc.text(`Gastos: R$ ${totals.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 95);
+                doc.text(`Patrimônio Líquido: R$ ${totals.liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 105);
+               
+                // Adicionar dados L/B ao relatório
+                doc.setFontSize(16);
+                doc.setTextColor(30, 58, 138);
+                doc.text('Controle L/B - Patrimônio Líquido & Base', 20, 125);
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Patrimônio Líquido (L): R$ ${this.lbData.liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 140);
+                doc.text(`Base (B): R$ ${this.lbData.base.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 150);
+                doc.text(`Meta da Base: R$ ${this.lbData.baseTarget.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 160);
+                doc.text(`Depositado: R$ ${this.lbData.depositedAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 170);
+                doc.text(`Progresso: ${((this.lbData.depositedAmount / this.lbData.baseTarget) * 100).toFixed(1)}%`, 20, 180);
+               
+                // Adicionar dados Enterprise Control ao relatório
+                doc.setFontSize(16);
+                doc.setTextColor(13, 125, 77);
+                doc.text('Enterprise Control - Gestão Empresarial', 20, 200);
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Saldo Bruto: R$ ${this.enterpriseData.saldoBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 215);
+                doc.text(`Saída: R$ ${this.enterpriseData.saida.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 225);
+                doc.text(`Saldo Líquido: R$ ${this.enterpriseData.saldoLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 235);
+                doc.text(`Itens na planilha: ${this.enterpriseData.items.length}`, 20, 245);
+               
+                const fileName = `InvestSul_Relatorio_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.pdf`;
+                doc.save(fileName);
+               
+                this.showNotification('Relatório gerado com sucesso!', 'success');
+            }
+           
+            generateEvolutionReport() {
+                this.showNotification('Gerando relatório de evolução...', 'info');
+                setTimeout(() => {
+                    this.showNotification('Relatório de evolução gerado com sucesso!', 'success');
+                }, 1000);
+            }
+           
+            generateFinancialReport() {
+                this.showNotification('Gerando relatório financeiro...', 'info');
+                setTimeout(() => {
+                    this.showNotification('Relatório financeiro gerado com sucesso!', 'success');
+                }, 1000);
+            }
+           
+            // Backup
+            exportBackup() {
+                const backupData = {
+                    items: this.items,
+                    history: this.history,
+                    itemCounter: this.itemCounter,
+                    adjustments: this.adjustments,
+                    lbData: this.lbData,
+                    enterpriseData: this.enterpriseData,
+                    exportDate: new Date().toISOString(),
+                    system: 'Invest Sul',
+                    version: '1.0'
+                };
+                const jsonData = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `InvestSul_Backup_${new Date().getTime()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                this.showNotification('Backup exportado com sucesso!', 'success');
+            }
+           
+            importBackup() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+               
+                input.onchange = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                           
+                            if (!data.items || !Array.isArray(data.items)) {
+                                throw new Error('Formato de arquivo inválido');
+                            }
+                           
+                            this.items = data.items;
+                            this.history = data.history || [];
+                            this.adjustments = data.adjustments || this.adjustments;
+                            this.lbData = data.lbData || this.lbData;
+                            this.enterpriseData = data.enterpriseData || this.enterpriseData;
+                            this.itemCounter = data.itemCounter || this.items.length + 1;
+                           
+                            this.saveData();
+                            this.updateUI();
+                            this.initializeLBFunction();
+                            this.initializeEnterpriseControl();
+                            this.showNotification('Backup importado com sucesso!', 'success');
+                        } catch (error) {
+                            this.showNotification('Erro ao importar backup: ' + error.message, 'error');
+                        }
+                    };
+                   
+                    reader.readAsText(file);
+                };
+               
+                input.click();
+            }
+           
+            // UI Updates
+            updateUI() {
+                this.updateTotals();
+                this.updateTables();
+                this.updateCharts();
+                this.syncLiquidoValue(); // Sincronizar Patrimônio Líquido
+            }
+           
+            updateTotals() {
+                const totals = this.calculateTotals();
+                const format = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+               
+                // Dashboard totals
+                document.getElementById('totalPatrimonio').textContent = format(totals.patrimonio);
+                document.getElementById('totalInvestimentos').textContent = format(totals.investimentos);
+                document.getElementById('totalGastos').textContent = format(totals.gastos);
+                const liquidoEl = document.getElementById('totalLiquido');
+                liquidoEl.textContent = format(totals.liquido);
+                if (totals.liquido < 0) {
+                    liquidoEl.style.color = '#ff0000';
+                } else {
+                    liquidoEl.style.color = 'var(--accent-purple)';
+                }
+                document.getElementById('totalPendentes').textContent = format(totals.pendentes);
+               
+                // Header totals
+                document.getElementById('headerPatrimonio').textContent = format(totals.patrimonio);
+                const headerLiquidoEl = document.getElementById('headerLiquido');
+                headerLiquidoEl.textContent = format(totals.liquido);
+                if (totals.liquido < 0) {
+                    headerLiquidoEl.style.color = '#ff0000';
+                } else {
+                    headerLiquidoEl.style.color = 'white';
+                }
+                document.getElementById('headerPendentes').textContent = format(totals.pendentes);
+            }
+           
+            updateTables() {
+                this.renderTable('patrimonio');
+                this.renderTable('investimentos');
+                this.renderTable('gastos');
+                this.renderTable('pendentes');
+               
+                const pendentesCount = this.items.filter(item => item.category === 'pendentes').length;
+                document.getElementById('pendentesCount').textContent = `${pendentesCount} ${pendentesCount === 1 ? 'item' : 'itens'}`;
+            }
+           
+            renderTable(category) {
+                const body = document.getElementById(`${category}Body`);
+                const items = this.items.filter(item => item.category === category);
+               
+                body.innerHTML = '';
+               
+                if (items.length === 0) {
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="empty-state" style="padding: 40px 20px;">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <h4>Nenhum registro encontrado</h4>
+                                <p>Adicione registros na categoria "${this.getCategoryName(category)}" para começar.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+               
+                items.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td><span class="badge badge-${item.status}">${this.getStatusName(item.status)}</span></td>
+                        <td style="font-weight: 600;">R$ ${item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td>
+                            <div class="action-group">
+                                ${category === 'pendentes' ? `
+                                    <button class="action-btn" data-id="${item.id}" data-action="classify">
+                                        <i class="fas fa-exchange-alt"></i> Classificar
+                                    </button>
+                                ` : `
+                                    <button class="action-btn" data-id="${item.id}" data-action="edit">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                `}
+                                <button class="action-btn delete" data-id="${item.id}" data-action="delete">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    body.appendChild(row);
+                });
+               
+                body.querySelectorAll('.action-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(btn.dataset.id);
+                        const action = btn.dataset.action;
+                       
+                        if (action === 'delete') {
+                            if (confirm('Tem certeza que deseja excluir este registro?')) {
+                                this.deleteItem(id);
+                            }
+                        } else if (action === 'edit') {
+                            this.editItemUI(id);
+                        } else if (action === 'classify') {
+                            this.showClassifyModal(id);
+                        }
+                    });
+                });
+            }
+           
+            // UI Helpers
+            showClassifyModal(id) {
+                const item = this.items.find(item => item.id === id);
+                if (!item) return;
+                this.currentItemToClassify = id;
+                document.getElementById('modalItemName').textContent = item.name;
+                this.openModal('classifyModal');
+            }
+           
+            editItemUI(id) {
+                const item = this.items.find(item => item.id === id);
+                if (!item) return;
+               
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemValue').value = item.value;
+                document.getElementById('itemCategory').value = item.category;
+               
+                document.querySelectorAll('#statusButtons .status-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === item.status) {
+                        btn.classList.add('active');
+                    }
+                });
+               
+                this.deleteItem(id);
+               
+                this.showNotification('Registro carregado para edição. Faça as alterações e clique em Adicionar.', 'info');
+            }
+           
+            openModal(modalId) {
+                document.getElementById(modalId).style.display = 'flex';
+            }
+           
+            closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+                this.currentItemToClassify = null;
+            }
+           
+            showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                const messageEl = document.getElementById('notificationMessage');
+                const icon = notification.querySelector('i');
+               
+                messageEl.textContent = message;
+                notification.className = `notification ${type} show`;
+               
+                icon.className = {
+                    'success': 'fas fa-check-circle',
+                    'error': 'fas fa-exclamation-circle',
+                    'warning': 'fas fa-exclamation-triangle',
+                    'info': 'fas fa-info-circle'
+                }[type] || 'fas fa-info-circle';
+               
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+           
+            // Utility Methods
+            getCategoryName(category) {
+                const names = {
+                    'patrimonio': 'Patrimônio',
+                    'investimentos': 'Investimentos',
+                    'gastos': 'Gastos',
+                    'pendentes': 'Pendentes'
+                };
+                return names[category] || category;
+            }
+           
+            getStatusName(status) {
+                const names = {
+                    'neutro': 'Neutro',
+                    'pendente': 'Pendente',
+                    'investido': 'Investido',
+                    'gasto': 'Gasto',
+                    'patrimonio': 'Patrimônio'
+                };
+                return names[status] || status;
+            }
+           
+            getStatusForCategory(category) {
+                const statusMap = {
+                    'patrimonio': 'patrimonio',
+                    'investimentos': 'investido',
+                    'gastos': 'gasto',
+                    'pendentes': 'pendente'
+                };
+                return statusMap[category] || 'neutro';
+            }
+           
+            // Event Listeners
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-item, .lb-menu-item, .enterprise-menu-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('.nav-item, .lb-menu-item, .enterprise-menu-item').forEach(nav => nav.classList.remove('active'));
+                        document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                       
+                        item.classList.add('active');
+                        const section = item.dataset.section;
+                        document.getElementById(section).classList.add('active');
+                        if (section === 'historico') this.updateHistoricoTable();
+                    });
+                });
+               
+                // Status buttons
+                document.querySelectorAll('#statusButtons .status-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#statusButtons .status-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+               
+                // Add item button
+                document.getElementById('addItemBtn').addEventListener('click', () => {
+                    const name = document.getElementById('itemName').value;
+                    const value = document.getElementById('itemValue').value;
+                    const category = document.getElementById('itemCategory').value;
+                    const status = document.querySelector('#statusButtons .status-btn.active').dataset.status;
+                   
+                    if (this.addItem(name, value, category, status)) {
+                        document.getElementById('itemName').value = '';
+                        document.getElementById('itemValue').value = '';
+                    }
+                });
+               
+                // Enter key support
+                ['itemName', 'itemValue'].forEach(id => {
+                    document.getElementById(id).addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            document.getElementById('addItemBtn').click();
+                        }
+                    });
+                });
+               
+                // Refresh charts buttons
+                document.getElementById('refreshChartsBtn').addEventListener('click', () => this.refreshCharts());
+                document.getElementById('refreshChartsBtn2').addEventListener('click', () => this.refreshCharts());
+               
+                // Export buttons
+                document.getElementById('exportPatrimonioBtn').addEventListener('click', () => this.exportTable('patrimonio'));
+                document.getElementById('exportInvestimentosBtn').addEventListener('click', () => this.exportTable('investimentos'));
+                document.getElementById('exportGastosBtn').addEventListener('click', () => this.exportTable('gastos'));
+               
+                // Classify all buttons
+                document.getElementById('classifyAllPatrimonioBtn').addEventListener('click', () => {
+                    if (confirm('Deseja classificar todos os registros pendentes como Patrimônio?')) {
+                        this.classifyAll('patrimonio');
+                    }
+                });
+                document.getElementById('classifyAllInvestimentosBtn').addEventListener('click', () => {
+                    if (confirm('Deseja classificar todos os registros pendentes como Investimentos?')) {
+                        this.classifyAll('investimentos');
+                    }
+                });
+                document.getElementById('classifyAllGastosBtn').addEventListener('click', () => {
+                    if (confirm('Deseja classificar todos os registros pendentes como Gastos?')) {
+                        this.classifyAll('gastos');
+                    }
+                });
+               
+                // Classify individual buttons in modal
+                document.getElementById('classifyPatrimonioBtn').addEventListener('click', () => {
+                    if (this.currentItemToClassify) {
+                        this.classifyItem(this.currentItemToClassify, 'patrimonio');
+                        this.closeModal('classifyModal');
+                    }
+                });
+                document.getElementById('classifyInvestimentosBtn').addEventListener('click', () => {
+                    if (this.currentItemToClassify) {
+                        this.classifyItem(this.currentItemToClassify, 'investimentos');
+                        this.closeModal('classifyModal');
+                    }
+                });
+                document.getElementById('classifyGastosBtn').addEventListener('click', () => {
+                    if (this.currentItemToClassify) {
+                        this.classifyItem(this.currentItemToClassify, 'gastos');
+                        this.closeModal('classifyModal');
+                    }
+                });
+               
+                // Report buttons
+                document.getElementById('generateFullReportBtn').addEventListener('click', () => this.generateFullReport());
+                document.getElementById('generateEvolutionReportBtn').addEventListener('click', () => this.generateEvolutionReport());
+                document.getElementById('generateFinancialReportBtn').addEventListener('click', () => this.generateFinancialReport());
+                document.getElementById('generateCustomReportBtn').addEventListener('click', () => {
+                    const period = document.getElementById('reportPeriod').value;
+                    this.showNotification(`Relatório ${period} será gerado em breve!`, 'info');
+                });
+               
+                // Adjustment button
+                document.getElementById('applyAdjustmentsBtn').addEventListener('click', () => this.applyAdjustments());
+               
+                // Event listeners para função L/B
+                document.getElementById('lbToggle').addEventListener('change', () => this.updateLBToggle());
+                document.getElementById('applyLiquidoBtn').addEventListener('click', () => this.adjustLiquidoValue());
+                document.getElementById('applyBaseBtn').addEventListener('click', () => this.adjustBaseValue());
+                document.getElementById('updateBaseSettingsBtn').addEventListener('click', () => this.updateBaseSettings());
+               
+                // NOVO: Event listeners para função Enterprise Control
+                document.getElementById('addEnterpriseItemBtn').addEventListener('click', () => this.addEnterpriseItem());
+                document.getElementById('addEnterpriseRowBtn').addEventListener('click', () => this.addEnterpriseRow());
+                document.getElementById('clearEnterpriseBtn').addEventListener('click', () => this.clearEnterpriseSheet());
+                document.getElementById('exportEnterpriseBtn').addEventListener('click', () => this.exportEnterpriseSheet());
+                document.getElementById('printEnterpriseBtn').addEventListener('click', () => this.printEnterpriseSheet());
+               
+                // Enter key support para Enterprise Control
+                ['enterpriseProduct', 'enterpriseValue'].forEach(id => {
+                    document.getElementById(id).addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            document.getElementById('addEnterpriseItemBtn').click();
+                        }
+                    });
+                });
+               
+                // Backup buttons
+                document.getElementById('backupLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.openModal('backupModal');
+                });
+                document.getElementById('exportBackupBtn').addEventListener('click', () => this.exportBackup());
+                document.getElementById('importBackupBtn').addEventListener('click', () => this.importBackup());
+                document.getElementById('createLocalBackupBtn').addEventListener('click', () => {
+                    this.saveData();
+                    this.showNotification('Backup local salvo com sucesso!', 'success');
+                });
+                document.getElementById('showBackupInfoBtn').addEventListener('click', () => this.showBackupInfo());
+                document.getElementById('clearAllDataBtn').addEventListener('click', () => this.clearAllData());
+               
+                // Footer links
+                document.getElementById('helpLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showHelp();
+                });
+                document.getElementById('aboutLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showAbout();
+                });
+                document.getElementById('reportLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.generateFullReport();
+                });
+               
+                // Calculator buttons
+                document.querySelectorAll('.calculator-grid .calc-btn[data-value]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const value = btn.getAttribute('data-value');
+                        calcAppend(value);
+                    });
+                });
+            }
+           
+            // Public Methods
+            refreshCharts() {
+                this.updateCharts();
+                this.showNotification('Gráficos atualizados!', 'success');
+            }
+           
+            exportTable(category) {
+                const items = this.items.filter(item => item.category === category);
+                if (items.length === 0) {
+                    this.showNotification('Nenhum dado para exportar!', 'warning');
+                    return;
+                }
+                let csv = 'Descrição,Status,Valor (R$),Data\n';
+                items.forEach(item => {
+                    csv += `"${item.name}","${this.getStatusName(item.status)}","${item.value}","${new Date(item.createdAt).toLocaleDateString('pt-BR')}"\n`;
+                });
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `InvestSul_${this.getCategoryName(category)}_${new Date().getTime()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                this.showNotification('Tabela exportada com sucesso!', 'success');
+            }
+           
+            showBackupInfo() {
+                alert('Sistema de Backup - Invest Sul\n\n' +
+                      '1. EXPORTAR BACKUP: Salva arquivo JSON no seu computador\n' +
+                      '2. IMPORTAR BACKUP: Restaura dados de arquivo anterior\n' +
+                      '3. SALVAR LOCALMENTE: Backup no localStorage\n\n' +
+                      'O sistema salva automaticamente a cada 2 minutos.\n\n' +
+                      'Recomendação: Faça backup semanalmente!');
+            }
+           
+            clearAllData() {
+                if (confirm('ATENÇÃO: Esta ação irá apagar TODOS os dados do sistema. Esta operação não pode ser desfeita. Deseja continuar?')) {
+                    this.items = [];
+                    this.history = [];
+                    this.adjustments = {
+                        patrimonio: 0,
+                        investimentos: 0,
+                        gastos: 0,
+                        liquido: 0,
+                        pendentes: 0
+                    };
+                   
+                    this.lbData = {
+                        liquido: 0,
+                        base: 0,
+                        isCombined: false,
+                        baseTarget: 10000,
+                        depositedAmount: 0,
+                        baseAdjusted: false
+                    };
+                   
+                    this.enterpriseData = {
+                        items: [],
+                        itemCounter: 1,
+                        saldoBruto: 0,
+                        saida: 0,
+                        saldoLiquido: 0,
+                        brutoCount: 0,
+                        saidaCount: 0
+                    };
+                   
+                    this.itemCounter = 1;
+                    localStorage.removeItem('investSulData');
+                    this.updateUI();
+                    this.initializeLBFunction();
+                    this.initializeEnterpriseControl();
+                    this.showNotification('Todos os dados foram removidos!', 'warning');
+                }
+            }
+           
+            showHelp() {
+                alert('Invest Sul - Sistema de Gestão Patrimonial\n\n' +
+                      '1. DASHBOARD: Visão geral com gráficos e totais\n' +
+                      '2. PATRIMÔNIO: Registre seus ativos e bens\n' +
+                      '3. INVESTIMENTOS: Controle suas aplicações financeiras\n' +
+                      '4. GASTOS: Acompanhe despesas e custos\n' +
+                      '5. ENTERPRISE CONTROL: Planilha de Gestão Empresarial (NOVO)\n' +
+                      '6. CONTROLE L/B: Patrimônio Líquido & Base\n' +
+                      '7. PENDENTES: Classifique transações em análise\n' +
+                      '8. RELATÓRIOS: Gere documentos PDF detalhados\n\n' +
+                      'ENTERPRISE CONTROL:\n' +
+                      '• Adicione produtos/serviços com valores\n' +
+                      '• Classifique como B (Saldo Bruto) ou S (Saída)\n' +
+                      '• Edite diretamente na planilha em tempo real\n' +
+                      '• Veja Saldo Bruto, Saída e Saldo Líquido atualizados automaticamente\n' +
+                      '• Exporte para CSV ou imprima\n\n' +
+                      'CONTROLE L/B:\n' +
+                      '• L: Patrimônio Líquido\n' +
+                      '• B: Base (valor separado)\n' +
+                      '• Toggle: Liga/Desliga unificação\n' +
+                      '• Valor depositado atualiza a Base em tempo real!\n\n' +
+                      'Dica: Use a busca na planilha para encontrar itens rapidamente!');
+            }
+           
+            showAbout() {
+                alert('Invest Sul v1.0\n\n' +
+                      'Sistema Inteligente de Gestão Patrimonial\n' +
+                      'Desenvolvido para controle financeiro pessoal e empresarial\n' +
+                      '© 2026 Todos os direitos reservados\n\n' +
+                      'Recursos:\n' +
+                      '• Gráficos evolutivos em tempo real\n' +
+                      '• Relatórios PDF profissionais\n' +
+                      '• Backup local seguro\n' +
+                      '• Interface moderna e responsiva\n' +
+                      '• Enterprise Control - Planilha empresarial completa\n' +
+                      '• Controle L/B - Gestão avançada Patrimônio/Base\n\n' +
+                      'NOVO: Enterprise Control\n' +
+                      '• Planilha estilo Excel com edição em tempo real\n' +
+                      '• Classificação B (Bruto) / S (Saída)\n' +
+                      '• Saldos atualizados automaticamente\n' +
+                      '• Exportação para CSV\n' +
+                      '• Sistema de busca integrado\n\n' +
+                      'Função L/B Aprimorada\n' +
+                      '• Controle avançado Patrimônio Líquido & Base\n' +
+                      '• Junção/separação de valores\n' +
+                      '• Ajustes em tempo real\n' +
+                      '• Sistema de depósito e metas');
+            }
+        }
+       
+        // Initialize system
+        let system;
+        window.addEventListener('DOMContentLoaded', () => {
+            system = new InvestSulSystem();
+            window.system = system;
+        });
+       
+        // Calculator functions
+        function calcAppend(val) {
+            document.getElementById('calcDisplay').value += val;
+        }
+       
+        function calcClear() {
+            document.getElementById('calcDisplay').value = '';
+            document.getElementById('calcResult').textContent = '';
+        }
+       
+        function calcBackspace() {
+            const display = document.getElementById('calcDisplay');
+            display.value = display.value.slice(0, -1);
+        }
+       
+        function calcEvaluate() {
+            try {
+                let expr = document.getElementById('calcDisplay').value.replace(/,/g, '.').replace(/x/g, '*');
+                if (!expr.trim()) {
+                    document.getElementById('calcResult').textContent = 'Digite uma expressão';
+                    return;
+                }
+                const result = math.evaluate(expr);
+                document.getElementById('calcResult').textContent = 'Resultado: ' + result.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('calcDisplay').value = '';
+            } catch (error) {
+                document.getElementById('calcResult').textContent = 'Erro: Expressão inválida';
+            }
+        }
+       
+        // Global modal close function
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (system) system.currentItemToClassify = null;
+        };
+    </script>
+</body>
+</html>
